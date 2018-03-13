@@ -8,7 +8,7 @@
 
 `GitHub Pages is a static site hosting service designed to host your personal, organization, or project pages directly from a GitHub repository.`
 
-好了，文档看完了，接下来可以愉快的创建一个属于自己的博客了，我先假设：你已经有了GitHub的账号，并且账号是 AAA，
+好了，文档看完了，接下来可以愉快的创建一个属于自己的博客了，我先假设：你已经有了GitHub的账号，并且账号是 `AAA`，
 
 首先 我们创建一个 名称为 `AAA.github.io` (名称必须按这个格式)的git仓库，如下图： 
 
@@ -71,3 +71,6 @@ npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.1.3 (node_modules\hex
 npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.1.3: wanted {"os":"darwin","arch":"any"} (current: {"os":"win32","arch":"x64"})
 hexo-cli@1.1.0
 added 103 packages from 338 contributors in 73.08s
+
+2.服务访问不了
+
