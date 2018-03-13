@@ -79,5 +79,5 @@ theme: landscape
 # type: git  所有的配置项目分号（你输入的http:这个分号不用）后面有参数的都要有一个空格
 deploy:
   type: git
-  repo: git@github.com:lanboys1225/lanboys1225.github.io.git
+  repo: https://github.com/lanboys1225/lanboys1225.github.io.git
   branch: master
