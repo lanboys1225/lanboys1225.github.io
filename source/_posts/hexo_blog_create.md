@@ -1,5 +1,6 @@
-# 教小白搭建 Hexo Blog 系列(一)
-
+---
+title: 教小白搭建 Hexo Blog 系列(一)
+---
 网上学习搭建hexo博客的教程一抓一大把，但是基本上都没说清楚这中间的原理到底是啥？那么让我带领大家一起去探个究竟，学习之前，我们先看看 Github Pages (以下简称 gp) 和 Hexo 到底是什么？
 
 ## 1. 什么是Github Pages?
@@ -14,10 +15,10 @@ GitHub Pages is a static site hosting service designed to host your personal, or
 
 首先 我们创建一个 名称为 `AAA.github.io` (名称必须按这个格式)的git仓库，如下图： 
 
-![](教小白搭建HexoBlog系列一/hexo_blog_create_20180313105757.png)
+![](hexo_blog_create/hexo_blog_create_20180313105757.png)
 然后，在浏览器中输入 `http://AAA.github.io` 
 
-![](教小白搭建HexoBlog系列一/hexo_blog_create_20180313112747.png)
+![](hexo_blog_create/hexo_blog_create_20180313112747.png)
 看到如上界面，说明我们的最简单的 github博客已经搭建完成啦~~~~
 
 ## 2. 什么是 Hexo?
@@ -89,11 +90,11 @@ added 103 packages from 338 contributors in 73.08s
    ```
 4. 现在启动服务器
    ```
-	$ hexo s  //或者 hexo server
-	// 出现如下信息，表明已经成功启动了服务器
-	$ hexo s
-	INFO  Start processing
-	INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.
+   $ hexo s  //或者 hexo server
+   // 出现如下信息，表明已经成功启动了服务器
+   $ hexo s
+   INFO  Start processing
+   INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.
 
    ```
 5. 现在在浏览器中输入 `http://localhost:4000/`或者 `http://127.0.0.1:4000/`（有的电脑，输入localhost访问不了，就用 127.0.0.1 访问）就可以访问啦~~
