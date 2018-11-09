@@ -36,7 +36,62 @@ apk安装代码如下：
 
 ###如何使用FileProvider?
 
-我们就不在本文描述了，网上资源很多
+```
+ AndroidManifest.xml
+  //authorities 不一定是这种格式, 可自定义
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.updateFileProvide"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+  
+  file_paths.xml
+ <resources>
+    <paths>
+        <!--代表外部存储区域的根目录下的文件 Environment.getExternalStorageDirectory()/path 值-->
+        <external-path name="root" path="."/>
+		<!--/storage/emulated/0/--> 
+        <external-path name="app_update" path="AppUpdate/apkdir" />
+        <!--/storage/emulated/0/AppUpdate/apkdir--> 
+        
+        <!--代表app 私有的存储区域 Context.getFilesDir()目录下的images目录 -->
+        <files-path name="private_files" path="imagesfiles" />
+        <!--/data/user/0/com.xxx.xxx/files/imagesfiles-->
+        
+        <!--代表app 私有的存储区域 Context.getCacheDir()目录下的images目录-->
+   		<cache-path name="private_cache" path="imagescache" />
+   		<!-- /data/user/0/com.xxx.xxx/cache/imagescache-->
+        
+        <!--代表app 外部存储区域根目录下的文件 Context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)目录下的Pictures目录-->
+   		<external-files-path name="external_files" path="Pictures/dir" />
+    	<!--/storage/emulated/0/Android/data/com.xxx.xxx/files/Pictures/dir-->
+    	
+    	
+    
+        <!--content:// com.xxx.xxx.fileprovider / app_update / xx.apk-->
+        <!--content:// FileProvider的authority / name值 / xx.apk-->
+        
+        举例：
+        File file = new File("/storage/emulated/0/AppUpdate/apkdir")
+        Uri uri = FileProvider.getUriForFile(this, "com.xxx.fileprovider", file);
+        
+        file 根据file_paths.xml提供的键值对来匹配替换出 uri, file_paths.xml 就相当于一个替换表格
+     </paths>
+</resources>
+  
+  
+  
+  
+  
+```
+
+
+
+ 
 
 
 
