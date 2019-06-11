@@ -15,10 +15,11 @@ GitHub Pages is a static site hosting service designed to host your personal, or
 
 首先 我们创建一个 名称为 `AAA.github.io` (名称必须按这个格式)的git仓库，如下图： 
 
-![](hexo_blog_create/hexo_blog_create_20180313105757.png)
+![](https://raw.githubusercontent.com/wiki/lanboys1225/lanboys1225.github.io/images/hexo_blog_create/hexo_blog_create_20180313105757.png)
+
 然后，在浏览器中输入 `http://AAA.github.io` 
 
-![](hexo_blog_create/hexo_blog_create_20180313112747.png)
+![](https://raw.githubusercontent.com/wiki/lanboys1225/lanboys1225.github.io/images/hexo_blog_create/hexo_blog_create_20180313112747.png)
 看到如上界面，说明我们的最简单的 github博客已经搭建完成啦~~~~
 
 ## 2. 什么是 Hexo?
@@ -47,7 +48,8 @@ Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 [Markdown](
 
 ### 坑：
 
-1.执行 npm install -g hexo-cli 报错
+1.执行 npm install -g hexo-cli 长时间无响应，或者报如下错
+
 ```
 $ npm install -g hexo-cli
 npm ERR! code EAI_AGAIN
@@ -57,7 +59,7 @@ npm ERR! request to https://registry.npmjs.org/hexo-cli failed, reason: getaddri
 npm ERR! A complete log of this run can be found in:
 npm ERR!     C:\Users\lanbing\AppData\Roaming\npm-cache\_logs\2018-03-13T02_15_13_203Z-debug.log
 ```
-解决办法：执行  `$ npm install -g npm ` 更新npm,  然后再次执行 `$ npm install -g hexo-cli` 
+解决办法：执行  `$ npm install -g npm ` 更新 npm ,  然后再次执行 `$ npm install -g hexo-cli` 
 ```
 $ npm install -g npm
 C:\Users\lanbing\AppData\Roaming\npm\npm -> C:\Users\lanbing\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js
@@ -76,28 +78,40 @@ added 103 packages from 338 contributors in 73.08s
 
 1. 新建一个文件夹叫   `helloBlog` (可自己随便取名字，无所谓)
 
-2. 进入文件夹 `helloBlog` 中， 执行下面命令初始化博客
+2. 进入文件夹 `helloBlog` 中， 在 `git bash` 窗口里面执行下面命令初始化博客
 
    ```
     $ hexo init 
     $ npm install //这条命令不执行，貌似也可以，不过官方文档写明要执行，那就执行吧
    ```
+3. 执行完命令后，文件夹目录如下表示初始化成功
+    ```
+    .
+   ├── _config.yml
+   ├── package.json
+   ├── scaffolds
+   ├── source
+   |   ├── _drafts
+   |   └── _posts
+   └── themes
+    
+   ```
 
-3. 博客已经构建好了，现在需要的是一个本地服务器来进行部署，Hexo 3.0 把服务器独立成了个别模块，必须先安装 [hexo-server](https://github.com/hexojs/hexo-server) 才能使用， 用如下命令安装：
+4. 博客已经构建好了，现在需要的是一个本地服务器来进行部署，Hexo 3.0 把服务器独立成了个别模块，必须先安装 [hexo-server](https://github.com/hexojs/hexo-server) 才能使用， 用如下命令安装：
 
    ```
    $ npm install hexo-server --save
    ```
-4. 现在启动服务器
+5. 现在启动服务器
    ```
    $ hexo s  //或者 hexo server
    // 出现如下信息，表明已经成功启动了服务器
    $ hexo s
    INFO  Start processing
    INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.
-
+   
    ```
-5. 现在在浏览器中输入 `http://localhost:4000/`或者 `http://127.0.0.1:4000/`（有的电脑，输入localhost访问不了，就用 127.0.0.1 访问）就可以访问啦~~
+6. 现在在浏览器中输入 `http://localhost:4000/`或者 `http://127.0.0.1:4000/`（有的电脑，输入localhost访问不了，就用 127.0.0.1 访问）就可以访问啦~~
 
 到目前为止，我们知道了在怎么样利用 github 和 hexo 搭建博客, 但是要怎么实现上面说的，将 hexo 生成的静态博客网页，放到 github 中进行托管？就等下一篇文章再给大家讲解啦！！
 
