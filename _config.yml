@@ -73,9 +73,12 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: material-x
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
+## 所有的配置项目分号（你输入的http:这个分号不用）后面有参数的都要有一个空格
 deploy:
-  type:
+  type: git
+  repo: git@lanboys1225.github:lanboys1225/lanboys1225.github.io.git
+  branch: master
