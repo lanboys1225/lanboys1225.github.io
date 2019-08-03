@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>Archives: 2019 | oopcoder</title>
+  <title>所有标签 | OOPcoder</title>
   
   
 
@@ -44,10 +44,10 @@
   
   
   <div class="cover-wrapper">
-    <cover class='cover  half'>
+    <cover class='cover tag half'>
       
         
-  <h1 class='title'>Material X</h1>
+  <h1 class='title'>OOPcoder</h1>
 
 
   <div class="m_search">
@@ -116,7 +116,7 @@
 		<div class="nav-main container container--flex">
       <a class="logo flat-box" href='/' >
         
-          oopcoder
+          OOPcoder
         
       </a>
 			<div class='menu navgation'>
@@ -128,7 +128,7 @@
                   
                   
                   id="home">
-									<i class='fas fa-grin fa-fw'></i>&nbsp;示例
+									<i class='fas fa-grin fa-fw'></i>&nbsp;首页
 								</a>
 							</li>
       			
@@ -172,7 +172,7 @@
 			
 				<div class="m_search">
 					<form name="searchform" class="form u-search-form">
-						<input type="text" class="input u-search-input" placeholder="Search" />
+						<input type="text" class="input u-search-input" placeholder="搜索" />
 						<i class="icon fas fa-search fa-fw"></i>
 					</form>
 				</div>
@@ -276,277 +276,40 @@
 
   <div class="l_body">
     <div class='body-wrapper'>
-      <div class='l_main'>
-	
-		
-  <section class="post-list">
-    
       
-        
-          
-        
-          
-        
-      
-    
-    
-      
-        
-          <div class='post-wrapper'>
-            <article class="post reveal ">
-  
-
-
-  <section class='meta'>
-    
-    
-    <div class="meta" id="header-meta">
-      
-        
-  <h2 class="title">
-    <a href="/2019/08/03/hexo_blog_create/">
-      Hexo 博客搭建（一）
-    </a>
-  </h2>
-
-
-      
-      <div class='new-meta-box'>
-        
-          
-        
-          
-            
-  <div class='new-meta-item author'>
-    <a href="http://yoursite.com" rel="nofollow">
-      
-        <i class="fas fa-user" aria-hidden="true"></i>
-      
-      <p>lanboys1225</p>
-    </a>
-  </div>
-
-
-          
-        
-          
-            <div class="new-meta-item date">
-  <a class='notlink'>
-    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2019-08-03</p>
-  </a>
-</div>
-
-          
-        
-          
-            
-  
-  <div class='new-meta-item category'>
-    <a href='/categories/it/' rel="nofollow">
-      <i class="fas fa-folder-open" aria-hidden="true"></i>
-      <p>it</p>
-    </a>
-  </div>
-
-
-          
-        
-          
-            
-
-          
-        
-          
-            
-
-          
-        
-      </div>
-      
-        <hr>
-      
-    </div>
-  </section>
-
-
-  <section class="article typo">
-    <div class="article-entry" itemprop="articleBody">
-      <p>网上学习搭建hexo博客的教程一抓一大把，但是基本上都没说清楚这中间的原理到底是啥？那么让我带领大家一起去探个究竟，学习之前，我们先看看 Github Pages (以下简称 gp) 和 Hexo 到底是什么？</p>
-<h2 id="1-什么是Github-Pages"><a href="#1-什么是Github-Pages" class="headerlink" title="1. 什么是Github Pages?"></a>1. 什么是Github Pages?</h2><p><a href="https://help.github.com/articles/what-is-github-pages/" target="_blank" rel="noopener">官方文档</a>是这样描述的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GitHub Pages is a static site hosting service designed to host your personal, organization, or project pages directly from a GitHub repository.</span><br></pre></td></tr></table></figure>
-
-<p>好了，文档看完了，接下来可以愉快的创建一个属于自己的博客了，我先假设：你已经有了GitHub的账号，并且账号是 <code>AAA</code>，</p>
-<p>首先 我们创建一个 名称为 <code>AAA.github.io</code> (名称必须按这个格式)的git仓库，如下图： </p>
-<p><img src="https://pic.superbed.cn/item/5d3ba3b6451253d178bfc354.png" alt></p>
-<p>然后，在浏览器中输入 <code>http://AAA.github.io</code> </p>
-<p><img src="https://pic.superbed.cn/item/5d3ba45f451253d178bfc82f.png" alt></p>
-<p>看到如上界面，说明我们的最简单的 github博客已经搭建完成啦<del>~</del></p>
-<h2 id="2-什么是-Hexo"><a href="#2-什么是-Hexo" class="headerlink" title="2. 什么是 Hexo?"></a>2. 什么是 Hexo?</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 <a href="http://daringfireball.net/projects/markdown/" target="_blank" rel="noopener">Markdown</a>（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<p>官方文档 <a href="https://hexo.io/zh-cn/docs/index.html" target="_blank" rel="noopener">点这查看</a></p>
-<p>看到这里，可能还是一脸懵逼，不过我们需要知道 gp 和 hexo 之间的联系，在我看来, 他们之间其实没有任何关系，唯一的联系是：</p>
-<blockquote>
-<p>github 会托管静态网页，而 hexo 会生成静态网页，我们只是将hexo生成的网页放到 github上，这样访问 <code>AAA.github.io</code> 就访问了hexo生成的网页</p>
-</blockquote>
-<p>这关系一下子就清楚了，接下来继续。。</p>
-<h2 id="3-环境-Node-js-Git-安装"><a href="#3-环境-Node-js-Git-安装" class="headerlink" title="3. 环境 Node.js / Git 安装"></a>3. 环境 <a href="http://nodejs.org/" target="_blank" rel="noopener">Node.js</a> / <a href="http://git-scm.com/" target="_blank" rel="noopener">Git</a> 安装</h2><p>来到这步，说明你已经了解了上述的概念</p>
-<p>主要流程：</p>
-<ol>
-<li>安装 git</li>
-<li>安装 node</li>
-<li>node安装好之后，安装 hexo</li>
-</ol>
-<p>安装细节的话，我们还是按照<a href="https://hexo.io/zh-cn/docs/index.html" target="_blank" rel="noopener">官方文档</a>进行</p>
-<h3 id="坑："><a href="#坑：" class="headerlink" title="坑："></a>坑：</h3><p>1.执行 npm install -g hexo-cli 长时间无响应，或者报如下错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br><span class="line">npm ERR! code EAI_AGAIN</span><br><span class="line">npm ERR! errno EAI_AGAIN</span><br><span class="line">npm ERR! request to https://registry.npmjs.org/hexo-cli failed, reason: getaddrinfo EAI_AGAIN registry.npmjs.org:443</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\lanbing\AppData\Roaming\npm-cache\_logs\2018-03-13T02_15_13_203Z-debug.log</span><br></pre></td></tr></table></figure>
-
-<p>解决办法：执行  <code>$ npm install -g npm</code> 更新 npm ,  然后再次执行 <code>$ npm install -g hexo-cli</code> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g npm</span><br><span class="line">C:\Users\lanbing\AppData\Roaming\npm\npm -&gt; C:\Users\lanbing\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js</span><br><span class="line">C:\Users\lanbing\AppData\Roaming\npm\npx -&gt; C:\Users\lanbing\AppData\Roaming\npm\node_modules\npm\bin\npx-cli.js</span><br><span class="line">npm@5.7.1</span><br><span class="line">added 533 packages in 113.185s</span><br><span class="line"></span><br><span class="line">C:\Users\lanbing\AppData\Roaming\npm\hexo -&gt; C:\Users\lanbing\AppData\Roaming\npm\node_modules\hexo-cli\bin\hexo</span><br><span class="line">npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.1.3 (node_modules\hexo-cli\node_modules\fsevents):</span><br><span class="line">npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.1.3: wanted &#123;&quot;os&quot;:&quot;darwin&quot;,&quot;arch&quot;:&quot;any&quot;&#125; (current: &#123;&quot;os&quot;:&quot;win32&quot;,&quot;arch&quot;:&quot;x64&quot;&#125;)</span><br><span class="line">hexo-cli@1.1.0</span><br><span class="line">added 103 packages from 338 contributors in 73.08s</span><br></pre></td></tr></table></figure>
-
-<h2 id="4-Hexo博客搭建"><a href="#4-Hexo博客搭建" class="headerlink" title="4.Hexo博客搭建"></a>4.Hexo博客搭建</h2><p>踩过一系列的坑之后，现在终于可以开始搭建 hexo blog了</p>
-<ol>
-<li><p>新建一个文件夹叫   <code>helloBlog</code> (可自己随便取名字，无所谓)</p>
-</li>
-<li><p>进入文件夹 <code>helloBlog</code> 中， 在 <code>git bash</code> 窗口里面执行下面命令初始化博客</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init </span><br><span class="line">$ npm install //这条命令不执行，貌似也可以，不过官方文档写明要执行，那就执行吧</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行完命令后，文件夹目录如下表示初始化成功</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> .</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>博客已经构建好了，现在需要的是一个本地服务器来进行部署，Hexo 3.0 把服务器独立成了个别模块，必须先安装 <a href="https://github.com/hexojs/hexo-server" target="_blank" rel="noopener">hexo-server</a> 才能使用， 用如下命令安装：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-server --save</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>现在启动服务器</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ hexo s  //或者 hexo server</span><br><span class="line">// 出现如下信息，表明已经成功启动了服务器</span><br><span class="line">$ hexo s</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>现在在浏览器中输入 <code>http://localhost:4000/</code>或者 <code>http://127.0.0.1:4000/</code>（有的电脑，输入localhost访问不了，就用 127.0.0.1 访问）就可以访问啦~~</p>
-</li>
-</ol>
-<p>到目前为止，我们知道了在怎么样利用 github 和 hexo 搭建博客, 但是要怎么实现上面说的，将 hexo 生成的静态博客网页，放到 github 中进行托管？就等下一篇文章再给大家讲解啦！！</p>
-
-      
-    </div>
-    
-      <div class="full-width auto-padding tags">
-        
-          <a href="/tags/it/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>it</a>
-        
-      </div>
-    
-  </section>
-</article>
-
-          </div>
-        
-      
-        
-          <div class='post-wrapper'>
-            <article class="post reveal ">
-  
-
-
-  <section class='meta'>
-    
-    
-    <div class="meta" id="header-meta">
-      
-        
-  <h2 class="title">
-    <a href="/2019/08/02/hello-world/">
-      Hello World
-    </a>
-  </h2>
-
-
-      
-      <div class='new-meta-box'>
-        
-          
-        
-          
-            
-  <div class='new-meta-item author'>
-    <a href="http://yoursite.com" rel="nofollow">
-      
-        <i class="fas fa-user" aria-hidden="true"></i>
-      
-      <p>lanboys1225</p>
-    </a>
-  </div>
-
-
-          
-        
-          
-            <div class="new-meta-item date">
-  <a class='notlink'>
-    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2019-08-02</p>
-  </a>
-</div>
-
-          
-        
-          
-            
-
-          
-        
-          
-            
-
-          
-        
-          
-            
-
-          
-        
-      </div>
-      
-        <hr>
-      
-    </div>
-  </section>
-
-
-  <section class="article typo">
-    <div class="article-entry" itemprop="articleBody">
-      <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    
-  </section>
-</article>
-
-          </div>
-        
-      
-    
-  </section>
+<div class='l_main'>
   
     
-    <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
+      <section class="post-list">
+        <div class='post-wrapper'>
+          <article id="archive-page" class="post article white-box">
+            <section class="archive">
+              <div class="archive-item archive-year mark">
+                <h2>所有标签</h2>
+                <hr>
+              </div>
+              <div class="archive-item archive-post mark">
+                
+                  
+                    
+                      <a class="" href="/blog/tags/it/">
+                        <time><i class='fas fa-hashtag fa-fw' aria-hidden="true"></i>&nbsp;&nbsp;it</time>
+                        <span class="title">
+                          (1)
+                        </span>
+                      </a>
+                    
+                  
+                
+              </div>
+              <br>
+              
+            </section>
+          </article>
+        </div>
+      </section>
     
-    
-
   
-
-
-	
 </div>
 <aside class='l_side'>
   
@@ -710,7 +473,7 @@
   <section class='widget category'>
     
 <header class='pure'>
-  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Categories</div>
+  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;文章分类</div>
   
     <a class="rightBtn"
     
@@ -726,7 +489,7 @@
     <div class='content pure'>
       <ul class="entry">
         
-          <li><a class="flat-box" title="/categories/it/" href="/categories/it/"><div class='name'>it</div><div class='badge'>(1)</div></a></li>
+          <li><a class="flat-box" title="/blog/categories/it/" href="/blog/categories/it/"><div class='name'>it</div><div class='badge'>(1)</div></a></li>
         
       </ul>
     </div>
@@ -743,7 +506,7 @@
   <section class='widget tagcloud'>
     
 <header class='pure'>
-  <div><i class="fas fa-fire fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Hot Tags</div>
+  <div><i class="fas fa-fire fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;热门标签</div>
   
     <a class="rightBtn"
     
@@ -757,7 +520,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/it/" style="font-size: 14px; color: #999">it</a>
+      <a href="/blog/tags/it/" style="font-size: 14px; color: #999">it</a>
     </div>
   </section>
 
@@ -858,30 +621,22 @@
     </div>
   
   <br>
-  <div><p>Blog content follows the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) License</a></p>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
 </div>
   <div>
-    Use
+    本站使用
     <a href="https://xaoxuu.com/wiki/material-x/" target="_blank" class="codename">Material X</a>
-    as theme
+    作为主题
     
-      , 
-      total visits
+      ，
+      总访问量为
       <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
-      times
+      次
     
-    . 
+    。
   </div>
 </footer>
 <script>setLoadingBarProgress(80);</script>
-
-
-
-
-	<!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
-	
-
-	
 
 
       <script>setLoadingBarProgress(60);</script>
@@ -984,15 +739,15 @@
 <!-- 复制 -->
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  let COPY_SUCCESS = "Copied";
-  let COPY_FAILURE = "Copy failed";
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
   /*页面载入完成后，创建复制按钮*/
   !function (e, t, a) {
     /* code */
     var initCopyCode = function(){
       var copyHtml = '';
       copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
-      copyHtml += '  <i class="fa fa-copy"></i><span>Copy</span>';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
       copyHtml += '</button>';
       $(".highlight .code pre").before(copyHtml);
       var clipboard = new ClipboardJS('.btn-copy', {
