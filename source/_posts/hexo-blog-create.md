@@ -1,9 +1,8 @@
 ---
-layout: post
 title:  Hexo 博客搭建（一）
-category: it
-tags: [it]
-excerpt: 小白搭建hexo
+date: 2019-08-02 15:20:02
+category: hexo
+tags: [hexo]
 ---
 网上学习搭建hexo博客的教程一抓一大把，但是基本上都没说清楚这中间的原理到底是啥？那么让我带领大家一起去探个究竟，学习之前，我们先看看 Github Pages (以下简称 gp) 和 Hexo 到底是什么？
 
@@ -24,7 +23,7 @@ GitHub Pages is a static site hosting service designed to host your personal, or
 然后，在浏览器中输入 `http://AAA.github.io` 
 
 ![](https://pic.superbed.cn/item/5d3ba45f451253d178bfc82f.png)
- 
+
 
 看到如上界面，说明我们的最简单的 github博客已经搭建完成啦~~~~
 
