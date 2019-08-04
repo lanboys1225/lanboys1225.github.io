@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>OOPcoder</title>
+  <title>oopcoder</title>
   
   
 
@@ -116,7 +116,7 @@
 		<div class="nav-main container container--flex">
       <a class="logo flat-box" href='/' >
         
-          OOPcoder
+          oopcoder
         
       </a>
 			<div class='menu navgation'>
@@ -172,7 +172,7 @@
 			
 				<div class="m_search">
 					<form name="searchform" class="form u-search-form">
-						<input type="text" class="input u-search-input" placeholder="搜索" />
+						<input type="text" class="input u-search-input" placeholder="Search" />
 						<i class="icon fas fa-search fa-fw"></i>
 					</form>
 				</div>
@@ -286,6 +286,8 @@
         
           
         
+          
+        
       
     
     
@@ -303,8 +305,8 @@
       
         
   <h2 class="title">
-    <a href="/2019/08/03/hexo_blog_create/">
-      Hexo 博客搭建（一）
+    <a href="/2019/08/04/pom-lastupdated/">
+      删除pom仓库中lastUpdated方法
     </a>
   </h2>
 
@@ -317,7 +319,7 @@
           
             
   <div class='new-meta-item author'>
-    <a href="http://me.oopcoder.cn" rel="nofollow">
+    <a href="https://me.oopcoder.cn" rel="nofollow">
       
         <i class="fas fa-user" aria-hidden="true"></i>
       
@@ -332,7 +334,7 @@
             <div class="new-meta-item date">
   <a class='notlink'>
     <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2019-08-03</p>
+    <p>2019-08-04</p>
   </a>
 </div>
 
@@ -342,9 +344,121 @@
             
   
   <div class='new-meta-item category'>
-    <a href='/blog/categories/it/' rel="nofollow">
+    <a href='/blog/categories/maven/' rel="nofollow">
       <i class="fas fa-folder-open" aria-hidden="true"></i>
-      <p>it</p>
+      <p>maven</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p>在使用maven管理pom项目的时候，多多少少会遇到一些奇葩的问题，比如网络良好，idea非离线状态，科学上网模式，maven就是死活无法更新jar包，很令人头大，无从下手找原因，当我们去查看maven本地仓库的时候，发现有些包里会多了一些以 .lastUpdated 结尾的文件，那么问题来了</p>
+<h4 id="为什么maven仓库会出现这些文件-又会导致什么问题"><a href="#为什么maven仓库会出现这些文件-又会导致什么问题" class="headerlink" title="为什么maven仓库会出现这些文件? 又会导致什么问题?"></a>为什么maven仓库会出现这些文件? 又会导致什么问题?</h4><blockquote>
+<p>在idea网络状态很差或者离线状态时，需要从远程仓库下载某些jar包到本地参库时，因网络差，无法下载，导致本地仓库出现 <code>xx.jar.lastUpdated</code> 或者 <code>xx.pom.lastUpdated</code> 文件(文件具体作用暂时不清楚)， 由于这些文件的存在，即使网络变好后，项目仍然报错， 无法重新下载需要的jar包</p>
+</blockquote>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法:"></a>解决方法:</h4><blockquote>
+<p>方法非常简单粗暴，找到本地仓库对应jar包目录位置将 <code>.lastUpdated</code> 文件删除, 刷新项目重新下载即可</p>
+</blockquote>
+<p>有的小伙伴可能会问，仓库那么多，总不会让我一个个找到然后删除吧，机智，下面给大家提供了两个一键删除脚本： </p>
+<h6 id="1、cleanLastUpdated-bat（windows版本）"><a href="#1、cleanLastUpdated-bat（windows版本）" class="headerlink" title="1、cleanLastUpdated.bat（windows版本）"></a>1、cleanLastUpdated.bat（windows版本）</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rem 这里写你的仓库路径</span><br><span class="line">set REPOSITORY_PATH=D:\Java\maven-repository</span><br><span class="line">rem 正在搜索...</span><br><span class="line">for /f &quot;delims=&quot; %%i in (&apos;dir /b /s &quot;%REPOSITORY_PATH%\*lastUpdated*&quot;&apos;) do (</span><br><span class="line">    echo %%i</span><br><span class="line">    del /s /q &quot;%%i&quot;</span><br><span class="line">)</span><br><span class="line">rem 搜索完毕</span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+
+<h6 id="2、cleanLastUpdated-sh（linux版本）"><a href="#2、cleanLastUpdated-sh（linux版本）" class="headerlink" title="2、cleanLastUpdated.sh（linux版本）"></a>2、cleanLastUpdated.sh（linux版本）</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 这里写你的仓库路径</span><br><span class="line">REPOSITORY_PATH=~/Documents/tools/repository</span><br><span class="line">echo 正在搜索...</span><br><span class="line">find $REPOSITORY_PATH -name &quot;*lastUpdated*&quot; | xargs rm -fr</span><br><span class="line">echo 搜索完</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/u011990675/article/details/80066897" target="_blank" rel="noopener">maven仓库中的LastUpdated文件生成原因及删除</a></p>
+
+      
+    </div>
+    
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/maven/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>maven</a>
+        
+          <a href="/blog/tags/pom/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>pom</a>
+        
+      </div>
+    
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/08/02/hexo-blog-create/">
+      Hexo 博客搭建（一）
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    <a href="https://me.oopcoder.cn" rel="nofollow">
+      
+        <i class="fas fa-user" aria-hidden="true"></i>
+      
+      <p>lanboys1225</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+    <p>2019-08-02</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/hexo/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>hexo</p>
     </a>
   </div>
 
@@ -428,7 +542,7 @@
     
       <div class="full-width auto-padding tags">
         
-          <a href="/blog/tags/it/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>it</a>
+          <a href="/blog/tags/hexo/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>hexo</a>
         
       </div>
     
@@ -465,7 +579,7 @@
           
             
   <div class='new-meta-item author'>
-    <a href="http://me.oopcoder.cn" rel="nofollow">
+    <a href="https://me.oopcoder.cn" rel="nofollow">
       
         <i class="fas fa-user" aria-hidden="true"></i>
       
@@ -708,7 +822,7 @@
   <section class='widget category'>
     
 <header class='pure'>
-  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;文章分类</div>
+  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Categories</div>
   
     <a class="rightBtn"
     
@@ -724,7 +838,9 @@
     <div class='content pure'>
       <ul class="entry">
         
-          <li><a class="flat-box" title="/blog/categories/it/" href="/blog/categories/it/"><div class='name'>it</div><div class='badge'>(1)</div></a></li>
+          <li><a class="flat-box" title="/blog/categories/hexo/" href="/blog/categories/hexo/"><div class='name'>hexo</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/blog/categories/maven/" href="/blog/categories/maven/"><div class='name'>maven</div><div class='badge'>(1)</div></a></li>
         
       </ul>
     </div>
@@ -741,7 +857,7 @@
   <section class='widget tagcloud'>
     
 <header class='pure'>
-  <div><i class="fas fa-fire fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;热门标签</div>
+  <div><i class="fas fa-fire fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Hot Tags</div>
   
     <a class="rightBtn"
     
@@ -755,7 +871,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/blog/tags/it/" style="font-size: 14px; color: #999">it</a>
+      <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/maven/" style="font-size: 14px; color: #999">maven</a> <a href="/blog/tags/pom/" style="font-size: 14px; color: #999">pom</a>
     </div>
   </section>
 
@@ -856,19 +972,19 @@
     </div>
   
   <br>
-  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+  <div><p>Blog content follows the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) License</a></p>
 </div>
   <div>
-    本站使用
+    Use
     <a href="https://xaoxuu.com/wiki/material-x/" target="_blank" class="codename">Material X</a>
-    作为主题
+    as theme
     
-      ，
-      总访问量为
+      , 
+      total visits
       <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
-      次
+      times
     
-    。
+    . 
   </div>
 </footer>
 <script>setLoadingBarProgress(80);</script>
@@ -974,15 +1090,15 @@
 <!-- 复制 -->
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  let COPY_SUCCESS = "复制成功";
-  let COPY_FAILURE = "复制失败";
+  let COPY_SUCCESS = "Copied";
+  let COPY_FAILURE = "Copy failed";
   /*页面载入完成后，创建复制按钮*/
   !function (e, t, a) {
     /* code */
     var initCopyCode = function(){
       var copyHtml = '';
       copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
-      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '  <i class="fa fa-copy"></i><span>Copy</span>';
       copyHtml += '</button>';
       $(".highlight .code pre").before(copyHtml);
       var clipboard = new ClipboardJS('.btn-copy', {
