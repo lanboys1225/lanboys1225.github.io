@@ -8,4 +8,4 @@
 
 ## 我的微信公众号 OOPcoder
 
-![](https://me.oopcoder.cn/assets/images/qrcode_for_oopcoder.jpg)
+![](https://me.oopcoder.cn/assets/images/qrcode_for_oopcoder_344x344.jpg)
