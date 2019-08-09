@@ -84,6 +84,10 @@ theme: material-x
 ## 所有的配置项目分号（你输入的http:这个分号不用）后面有参数的都要有一个空格
 deploy:
 - type: git
+  repo: git@gitee.com:oopcoder/oopcoder.gitee.io.git 
+  branch: master
+
+- type: git
   repo: git@git.coding.net:lan_bing/lan_bing.coding.me.git
   branch: master
 
