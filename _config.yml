@@ -95,6 +95,12 @@ deploy:
   repo: git@lanboys1225.github:lanboys1225/lanboys1225.github.io.git
   branch: master
 
+gitalk: 
+  clientID: c713598cfacc7cef1acd
+  clientSecret: 86907b23d629dbb52f16b95e0ede002414db26c7
+  repo: lanboys1225.github.io
+  owner: lanboys1225
+  admin: [lanboys1225]
 
 # 全局导入
 import:
