@@ -267,12 +267,12 @@
             "zh-cn": {
                 head: {
 										nick: "昵称（必填）",
-										mail: "邮箱（必填）",
-										link: "链接"
+										mail: "邮箱",
+										link: "您的博客地址"
                 },
                 tips: {
-                    comments: "评论",
-                    sofa: "快来做第一个评论的人吧~",
+                    comments: "聊聊",
+                    sofa: "快来抢沙发吧~",
                     busy: "还在提交中，请稍候...",
                     again: "这么简单也能错，也是没谁了."
                 },
@@ -874,10 +874,10 @@
 									alert('请输入昵称！');
 									return void _.nick.focus();
 								}
-								if (v.mail == "") {
-									alert('请输入邮箱！');
-									return void _.mail.focus();
-								}
+								//if (v.mail == "") {
+								//	alert('请输入邮箱！');
+								//	return void _.mail.focus();
+								//}
 								if ("" == v.comment) {
 									alert('请输入内容！');
 									return void _.comment.focus();

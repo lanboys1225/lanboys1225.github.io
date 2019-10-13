@@ -873,7 +873,7 @@
   <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
   
     
-      <script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0/js/volantis.min.js"></script>
+      <script src="/js/volantis.js"></script>
     
   
   <script>
@@ -882,7 +882,7 @@
     return GUEST_INFO.indexOf(item) > -1
   });
   var notify = 'true' == true;
-  var verify = 'true' == true;
+  var verify = 'false' == true;
   var valine = new Valine();
   valine.init({
     el: '#valine_container',
@@ -892,7 +892,7 @@
     
     appId: "QY4MmyD4tSj80IfJSRJ78Nus-MdYXbMMI",
     appKey: "WEzGAiXD0HWsTfiQdQ1eUgjU",
-    placeholder: "快来评论吧~",
+    placeholder: "嗨，陌生人，既然来了，就说点啥呗~",
     pageSize:'10',
     avatar:'mp',
     lang:'zh-cn',
