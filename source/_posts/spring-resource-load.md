@@ -30,13 +30,13 @@ ApplicationContext context = new ClassPathXmlApplicationContext(
 ```
 >通过字面意思，可以看出`ClassPathXmlApplicationContext`, 传入的是classpath目录下的资源文件, `FileSystemXmlApplicationContext`, 传入的是文件系统下资源文件(即文件绝对路径), 我们在资源文件前面加上 classpath 或 file，启动试试，发现也都成功了，看来资源的定位没有上面说的那么简单，还跟资源路径前缀有关。
 
+
+
 > 提醒：本文是基于Spring 3.0.0.RELEASE 版本进行讲解的，其他版本可能稍有差异，在贴源码的时候，部分不影响流程的代码也在本文省略了
 
 下面带着疑问来看看Spring资源到底是怎么定位和加载进来的。进入ClassPathXmlApplicationContext源码，按下面路径走, 找到getResources方法：
+> refresh() -> obtainFreshBeanFactory() -> refreshBeanFactory() -> loadBeanDefinitions(DefaultListableBeanFactory beanFactory)  
 ```
-    // 路径
-    refresh() -> obtainFreshBeanFactory() -> refreshBeanFactory() -> loadBeanDefinitions(DefaultListableBeanFactory beanFactory)  
- 
     // AbstractXmlApplicationContext.java
  	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
@@ -206,25 +206,28 @@ DefaultResourceLoader
 
 `applicationContext.xml` 和 `E:\\IDEA_workspace\\SpringLearningDemo\\spring-java\\src\\main\\resources\\applicationContext.xml`
 > 走的是 DefaultResourceLoader 默认的 getResourceByPath方法，返回的classpath里面的资源，所以后者在ClassPathXmlApplicationContext里面是启动不了的，反之前者在FileSystemXmlApplicationContext也启动不了
- 
+
 `classpath:applicationContext.xml` 和 `file:E:\\IDEA_workspace\\SpringLearningDemo\\spring-java\\src\\main\\resources\\applicationContext.xml`
 > 都带有前缀，所以跟getResourceByPath无关，也就是跟 FileSystemXmlApplicationContext 和 ClassPathXmlApplicationContext 无关，传入哪个Context都能启动成功
 
 总结起来, Spring的资源路径填写方式如下：
 
-前缀 | 示例 | 说明
----|---|---
-classpath: | classpath:a/c.xml | 从classpath中加载，存在多个资源则返回最先加载的那个资源，易导致资源加载不进来的问题
-classpath*: | classpath*:a/c.xml | 从classpath中加载，返回全部符合条件的资源，需要遍历所有classpath, 因此加载效率低
-file: 或 jar:file: 等URI协议名 | file:d:\\b\\f.xml |作为URL进行加载
-没有前缀 | a/c.xml 或 d:\\b\\f.xml | 根据context的getResourceByPath方法判断
+| 前缀                        | 示例                     | 说明                                       |
+| ------------------------- | ---------------------- | ---------------------------------------- |
+| classpath:                | classpath:a/c.xml      | 从classpath中加载，存在多个资源则返回最先加载的那个资源，易导致资源加载不进来的问题 |
+| classpath*:               | classpath*:a/c.xml     | 从classpath中加载，返回全部符合条件的资源，需要遍历所有classpath, 因此加载效率低 |
+| file: 或 jar:file: 等URI协议名 | file:d:\\b\\f.xml      | 作为URL进行加载                                |
+| 没有前缀                      | a/c.xml 或 d:\\b\\f.xml | 根据context的getResourceByPath方法判断          |
 
  Ant风格 的匹配模式
 >  “ ? ”：匹配一个字符, 如 a?.xml 匹配 ab.xml
 
+
+
 >  “ * ”：匹配零个或多个字符串，如“a/ * /c.xml”将匹配“a/b/c.xml”，但不匹配匹配“a/c.xml”；而“a/c-*.xml”将匹配“a/c-dao.xml”
 
+
+
 > “ ** ”：匹配路径中的零个或多个目录，如“a/ ** /c.xml”将匹配“a /c.xml”，也匹配“a/b/b/c.xml”；而“a/b/c- ** .xml”将匹配“a/b/c-dao.xml”，即把“ ** ”当做两个“ * ”处理。
- 
+
  这就是Spring容器中资源的定位，然后通过 `Resource` 的 `getInputStream()` 加载进内存进行解析，至于如何解析，就请听下回分解啦。
- 
