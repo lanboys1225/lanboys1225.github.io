@@ -37,46 +37,46 @@ ApplicationContext context = new ClassPathXmlApplicationContext(
 下面带着疑问来看看Spring资源到底是怎么定位和加载进来的。进入ClassPathXmlApplicationContext源码，按下面路径走, 找到getResources方法：
 > refresh() -> obtainFreshBeanFactory() -> refreshBeanFactory() -> loadBeanDefinitions(DefaultListableBeanFactory beanFactory)  
 ```
-    // AbstractXmlApplicationContext.java
- 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
-		// 创建 XmlBeanDefinitionReader
-		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
-		// 传入ResourceLoader
-		beanDefinitionReader.setResourceLoader(this);
-		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
-    	initBeanDefinitionReader(beanDefinitionReader);
+// AbstractXmlApplicationContext.java
+@Override
+protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
+    // 创建 XmlBeanDefinitionReader
+    XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+    // 传入ResourceLoader
+    beanDefinitionReader.setResourceLoader(this);
+    beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
+    initBeanDefinitionReader(beanDefinitionReader);
 
-		loadBeanDefinitions(beanDefinitionReader);
-	}
-	
-	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
-		Resource[] configResources = getConfigResources();
-		if (configResources != null) {
-			reader.loadBeanDefinitions(configResources);
-		}
-		// 获取容器启动时，传入的资源文件路径
-		String[] configLocations = getConfigLocations();
-		if (configLocations != null) {
-			reader.loadBeanDefinitions(configLocations);
-		}
-	}
-	
-	// AbstractBeanDefinitionReader.java
-	public int loadBeanDefinitions(String location, Set<Resource> actualResources) throws BeanDefinitionStoreException {
-		ResourceLoader resourceLoader = getResourceLoader();
-		//..........此处省略部分源码
-		if (resourceLoader instanceof ResourcePatternResolver) {
-			// Resource pattern matching available.
-			try {
-				// 这里才是真正将 资源路径 解析为Resource的地方
-				Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
-				int loadCount = loadBeanDefinitions(resources);
-		        //..........此处省略部分源码
-		    }
-		}
-		//..........此处省略部分源码
-	}
+    loadBeanDefinitions(beanDefinitionReader);
+}
+
+protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+    Resource[] configResources = getConfigResources();
+    if (configResources != null) {
+        reader.loadBeanDefinitions(configResources);
+    }
+    // 获取容器启动时，传入的资源文件路径
+    String[] configLocations = getConfigLocations();
+    if (configLocations != null) {
+        reader.loadBeanDefinitions(configLocations);
+    }
+}
+
+// AbstractBeanDefinitionReader.java
+public int loadBeanDefinitions(String location, Set<Resource> actualResources) throws BeanDefinitionStoreException {
+    ResourceLoader resourceLoader = getResourceLoader();
+    //..........此处省略部分源码
+    if (resourceLoader instanceof ResourcePatternResolver) {
+        // Resource pattern matching available.
+        try {
+            // 这里才是真正将 资源路径 解析为Resource的地方
+            Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+            int loadCount = loadBeanDefinitions(resources);
+            //..........此处省略部分源码
+        }
+    }
+    //..........此处省略部分源码
+}
 ```
 
 从上面可以看出，`AbstractXmlApplicationContext` 将`Bean`的装载任务委派给了`XmlBeanDefinitionReader`, 而`ResourceLoader`负责将`xml`解析为`Resource`。
@@ -89,118 +89,118 @@ ApplicationContext context = new ClassPathXmlApplicationContext(
 
 ![](https://pic.superbed.cn/item/5da86eb4451253d1780e7ce3.png)
 
-其中`资源定位路径 --> Resource` 这个过程是由 `ResourceLoader` 这个类来完成的，我们暂且称之为: 资源定位器, 其默认实现是 `DefaultResourceLoader`。
+其中`资源定位路径 -> Resource` 这个过程是由 `ResourceLoader` 这个类来完成的，我们暂且称之为: 资源定位器, 其默认实现是 `DefaultResourceLoader`。
 
 `ResourcePatternResolver` 继承自 `ResourceResolver` ，扩展了一个能通过`路径模式`匹配定位的方法： `Resource[] getResources(String locationPattern)`，其路径模式支持以  `classpath / classpath*` 或 URI协议名（例如 `http、file、jar:file`）为其前缀，还支持 `Ant风格` 的匹配模式。
 
 看看 `ResourcePatternResolver` 的实现类 `PathMatchingResourcePatternResolver`
 
 ```	
-    // 构造方法创建的 DefaultResourceLoader
-    private final ResourceLoader resourceLoader;
-    // Ant风格 路径匹配器
-	private PathMatcher pathMatcher = new AntPathMatcher();
- 
-	public Resource[] getResources(String locationPattern) throws IOException {
-		if (locationPattern.startsWith("classpath*:")) {
-			// "classpath*:" 后的路径是否含有通配符 “*” 或 “?”，即是否为路径模式
-			if (getPathMatcher().isPattern(locationPattern.substring("classpath*:".length()))) {
-			    // eg: classpath*:a/b/applicationContext-*.xml
-				// 根据路径模式 查找所有匹配的资源
-				return findPathMatchingResources(locationPattern);
-			} else {
-			    // eg: classpath*:a/b/applicationContext-dao.xml 或 classpath*:a/b/
-				// 根据确定路径 在所有classpath中(包含所有jar包)查找资源
-				return findAllClassPathResources(locationPattern.substring("classpath*:".length()));
-			}
-		} else {
-			// 第一个 ":" 后的路径是否含有通配符 “*” 或 “?”，即是否为路径模式
-			int prefixEnd = locationPattern.indexOf(":") + 1;
-			if (getPathMatcher().isPattern(locationPattern.substring(prefixEnd))) {
-				// 根据路径模式 查找所有匹配的资源
-				return findPathMatchingResources(locationPattern);
-			} else {
-				// 加载单个资源，后面再详细讲讲 getResource 这个方法
-				return new Resource[] {getResourceLoader().getResource(locationPattern)};
-			}
-		}
-	}
-	
-	// 根据路径模式 查找所有匹配的资源
-	protected Resource[] findPathMatchingResources(String locationPattern) throws IOException {
-	    // 获取到一个不含通配符的根目录，如 classpath*:a/b/*/applicationContext-*.xml 返回 classpath*:a/b/
-		String rootDirPath = determineRootDir(locationPattern);
-		// 返回 */applicationContext-*.xml
-		String subPattern = locationPattern.substring(rootDirPath.length());
-		// 递归调用getResources(), 获取的符合根目录的所有资源
-		Resource[] rootDirResources = getResources(rootDirPath);
-		Set<Resource> result = new LinkedHashSet<Resource>(16);
-		// 遍历根目录资源，将匹配的资源添加到 result 中
-		for (Resource rootDirResource : rootDirResources) {
-		    // jar:file:开头的为jar包资源
-			if (isJarResource(rootDirResource)) {
-				result.addAll(doFindPathMatchingJarResources(rootDirResource, subPattern));
-			} else if (rootDirResource.getURL().getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
-				result.addAll(VfsResourceMatchingDelegate.findMatchingResources(rootDirResource, subPattern, getPathMatcher()));
-			} else {
-			    // 其他类型资源走这里
-				result.addAll(doFindPathMatchingFileResources(rootDirResource, subPattern));
-			}
-		}
-		return result.toArray(new Resource[result.size()]);
-	}
-	
-	protected Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern)
-			throws IOException {
-		File rootDir = rootDirResource.getFile().getAbsoluteFile();
-		//..........此处省略部分源码
-		return doFindMatchingFileSystemResources(rootDir, subPattern);
-	}
-	
-	protected Set<Resource> doFindMatchingFileSystemResources(File rootDir, String subPattern) throws IOException {
-        // retrieveMatchingFiles 流程比较长就不贴出来了，有兴趣的朋友可以debug进去看看
-		Set<File> matchingFiles = retrieveMatchingFiles(rootDir, subPattern);
-		Set<Resource> result = new LinkedHashSet<Resource>(matchingFiles.size());
-		for (File file : matchingFiles) {
-		    // 符合条件的路径 此时就解析为Resource了
-			result.add(new FileSystemResource(file));
-		}
-		return result;
-	}
+// 构造方法创建的 DefaultResourceLoader
+private final ResourceLoader resourceLoader;
+// Ant风格 路径匹配器
+private PathMatcher pathMatcher = new AntPathMatcher();
+
+public Resource[] getResources(String locationPattern) throws IOException {
+    if (locationPattern.startsWith("classpath*:")) {
+        // "classpath*:" 后的路径是否含有通配符 “*” 或 “?”，即是否为路径模式
+        if (getPathMatcher().isPattern(locationPattern.substring("classpath*:".length()))) {
+            // eg: classpath*:a/b/applicationContext-*.xml
+            // 根据路径模式 查找所有匹配的资源
+            return findPathMatchingResources(locationPattern);
+        } else {
+            // eg: classpath*:a/b/applicationContext-dao.xml 或 classpath*:a/b/
+            // 根据确定路径 在所有classpath中(包含所有jar包)查找资源
+            return findAllClassPathResources(locationPattern.substring("classpath*:".length()));
+        }
+    } else {
+        // 第一个 ":" 后的路径是否含有通配符 “*” 或 “?”，即是否为路径模式
+        int prefixEnd = locationPattern.indexOf(":") + 1;
+        if (getPathMatcher().isPattern(locationPattern.substring(prefixEnd))) {
+            // 根据路径模式 查找所有匹配的资源
+            return findPathMatchingResources(locationPattern);
+        } else {
+            // 加载单个资源，后面再详细讲讲 getResource 这个方法
+            return new Resource[] {getResourceLoader().getResource(locationPattern)};
+        }
+    }
+}
+
+// 根据路径模式 查找所有匹配的资源
+protected Resource[] findPathMatchingResources(String locationPattern) throws IOException {
+    // 获取到一个不含通配符的根目录，如 classpath*:a/b/*/applicationContext-*.xml 返回 classpath*:a/b/
+    String rootDirPath = determineRootDir(locationPattern);
+    // 返回 */applicationContext-*.xml
+    String subPattern = locationPattern.substring(rootDirPath.length());
+    // 递归调用getResources(), 获取的符合根目录的所有资源
+    Resource[] rootDirResources = getResources(rootDirPath);
+    Set<Resource> result = new LinkedHashSet<Resource>(16);
+    // 遍历根目录资源，将匹配的资源添加到 result 中
+    for (Resource rootDirResource : rootDirResources) {
+        // jar:file:开头的为jar包资源
+        if (isJarResource(rootDirResource)) {
+            result.addAll(doFindPathMatchingJarResources(rootDirResource, subPattern));
+        } else if (rootDirResource.getURL().getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
+            result.addAll(VfsResourceMatchingDelegate.findMatchingResources(rootDirResource, subPattern, getPathMatcher()));
+        } else {
+            // 其他类型资源走这里
+            result.addAll(doFindPathMatchingFileResources(rootDirResource, subPattern));
+        }
+    }
+    return result.toArray(new Resource[result.size()]);
+}
+
+protected Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern)
+        throws IOException {
+    File rootDir = rootDirResource.getFile().getAbsoluteFile();
+    //..........此处省略部分源码
+    return doFindMatchingFileSystemResources(rootDir, subPattern);
+}
+
+protected Set<Resource> doFindMatchingFileSystemResources(File rootDir, String subPattern) throws IOException {
+    // retrieveMatchingFiles 流程比较长就不贴出来了，有兴趣的朋友可以debug进去看看
+    Set<File> matchingFiles = retrieveMatchingFiles(rootDir, subPattern);
+    Set<Resource> result = new LinkedHashSet<Resource>(matchingFiles.size());
+    for (File file : matchingFiles) {
+        // 符合条件的路径 此时就解析为Resource了
+        result.add(new FileSystemResource(file));
+    }
+    return result;
+}
 ```
 上面就是`PathMatchingResourcePatternResolver`路径模式匹配的基本逻辑。加载单个资源的任务是委托给了构造方法里面创建的 `DefaultResourceLoader`
 
-DefaultResourceLoader
+DefaultResourceLoader 如下
 ```
-	public Resource getResource(String location) {
-        // 以 classpath: 开头的返回 ClassPathResource
-		if (location.startsWith("classpath:")) {
-			return new ClassPathResource(location.substring("classpath:".length()), getClassLoader());
-		} else {
-			try {
-				// 能够解析为URL的返回 UrlResource
-				URL url = new URL(location);
-				return new UrlResource(url);
-			} catch (MalformedURLException ex) {
-				// 不能够解析为URL的 由getResourceByPath返回
-				return getResourceByPath(location);
-			}
-		}
-	}
-	
-	protected Resource getResourceByPath(String path) {
-	    // 默认返回 ClassPathContextResource
-		return new ClassPathContextResource(path, getClassLoader());
-	}
+public Resource getResource(String location) {
+    // 以 classpath: 开头的返回 ClassPathResource
+    if (location.startsWith("classpath:")) {
+        return new ClassPathResource(location.substring("classpath:".length()), getClassLoader());
+    } else {
+        try {
+            // 能够解析为URL的返回 UrlResource
+            URL url = new URL(location);
+            return new UrlResource(url);
+        } catch (MalformedURLException ex) {
+            // 不能够解析为URL的 由getResourceByPath返回
+            return getResourceByPath(location);
+        }
+    }
+}
+
+protected Resource getResourceByPath(String path) {
+    // 默认返回 ClassPathContextResource
+    return new ClassPathContextResource(path, getClassLoader());
+}
 ```
 从上面的类结构图，我们看到 `FileSystemXmlApplicationContext` 和 `ClassPathXmlApplicationContext` 都是 `DefaultResourceLoader` 的子类，区别在于前者重写了 `getResourceByPath` 方法
 ```
-	protected Resource getResourceByPath(String path) {
-		if (path != null && path.startsWith("/")) {
-			path = path.substring(1);
-		}
-		return new FileSystemResource(path);
-	}
+protected Resource getResourceByPath(String path) {
+    if (path != null && path.startsWith("/")) {
+        path = path.substring(1);
+    }
+    return new FileSystemResource(path);
+}
 ```
 那么 不带前缀的 路径或者 自定义前缀 的路径能否定位成功，关键在于`getResourceByPath`方法了，回到文章开始 传入的路径:
 
