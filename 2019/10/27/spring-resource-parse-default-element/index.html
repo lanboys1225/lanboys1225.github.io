@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Spring容器加载过程源码解析之默认标签解析 | OOPcoder</title>
+  
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+  
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="msapplication-TileColor" content="#1BC3FB">
+  <meta name="msapplication-config" content="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/browserconfig.xml">
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.6.3/css/all.min.css">
+  
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/favicon-32x32.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/apple-touch-icon.png">
+  <link rel="mask-icon" color="#1BC3FB" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/safari-pinned-tab.svg">
+  <link rel="manifest" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/site.webmanifest">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.5/css/style.css">
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <h1 class='title'>OOPcoder</h1>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <input type="text" class="input u-search-input" placeholder="" />
+      <i class="icon fas fa-search fa-fw"></i>
+    </form>
+  </div>
+
+<div class='menu navgation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home" href="/"
+            
+            
+            id="home">
+            <i class='fas fa-rss fa-fw'></i>&nbsp;博文
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="https://github.com/lanboys1225"
+            
+            
+            id="https:github.comlanboys1225">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home" href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+
+      
+    </cover>
+    <header class="l_header pure">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar" class="pure"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" href='/' >
+        
+          OOPcoder
+        
+      </a>
+			<div class='menu navgation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                  id="home">
+									<i class='fas fa-grin fa-fw'></i>&nbsp;首页
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="blogcategories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="blogtags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+			
+				<div class="m_search">
+					<form name="searchform" class="form u-search-form">
+						<input type="text" class="input u-search-input" placeholder="搜索" />
+						<i class="icon fas fa-search fa-fw"></i>
+					</form>
+				</div>
+			
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone">
+    <header>
+		<nav class="menu navgation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="https://github.com/lanboys1225"
+                
+                
+                id="https:github.comlanboys1225">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="https://xaoxuu.com/wiki/material-x/"
+                
+                  rel="nofollow"
+                
+                
+                id="https:xaoxuu.comwikimaterial-x">
+								<i class='fas fa-book fa-fw'></i>&nbsp;主题文档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/10/27/spring-resource-parse-default-element/">
+        Spring容器加载过程源码解析之默认标签解析
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    <a href="http://me.oopcoder.cn" rel="nofollow">
+      
+        <i class="fas fa-user" aria-hidden="true"></i>
+      
+      <p>lanboys1225</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+    <p>2019-10-27</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/spring/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>spring</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          <blockquote>
+<p>在上文 <a href="https://me.oopcoder.cn/2019/10/21/spring-resource-parse/">Spring容器加载过程源码解析之Resource解析流程</a> 中，我们已经了解了整个解析流程，今天我们来具体分析下默认标签的解析。</p>
+</blockquote>
+<blockquote>
+<p>提醒：本文是基于Spring 3.0.0.RELEASE 版本进行讲解的，其他版本可能稍有差异，在贴源码的时候，部分不影响流程的代码也在本文省略了</p>
+</blockquote>
+<h5 id="1-什么是默认标签和自定义标签"><a href="#1-什么是默认标签和自定义标签" class="headerlink" title="1.什么是默认标签和自定义标签"></a>1.什么是默认标签和自定义标签</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) &#123;</span><br><span class="line">    // 判断是否为默认命名空间下的标签</span><br><span class="line">    if (delegate.isDefaultNamespace(delegate.getNamespaceURI(root))) &#123;</span><br><span class="line">        // 循环遍历 解析默认标签</span><br><span class="line">        NodeList nl = root.getChildNodes();</span><br><span class="line">        for (int i = 0; i &lt; nl.getLength(); i++) &#123;</span><br><span class="line">            Node node = nl.item(i);</span><br><span class="line">            if (node instanceof Element) &#123;</span><br><span class="line">                Element ele = (Element) node;</span><br><span class="line">                String namespaceUri = delegate.getNamespaceURI(ele);</span><br><span class="line">                // 判断是否为默认命名空间下的标签</span><br><span class="line">                if (delegate.isDefaultNamespace(namespaceUri)) &#123;</span><br><span class="line">                    // 默认标签解析方法</span><br><span class="line">                    parseDefaultElement(ele, delegate);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    // 自定义标签解析方法</span><br><span class="line">                    delegate.parseCustomElement(ele);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 自定义标签解析方法</span><br><span class="line">        delegate.parseCustomElement(root);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 判断是否为默认命名空间下的标签</span><br><span class="line">public boolean isDefaultNamespace(String namespaceUri) &#123;</span><br><span class="line">	return (!StringUtils.hasLength(namespaceUri) || &quot;http://www.springframework.org/schema/beans&quot;.equals(namespaceUri));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) &#123;</span><br><span class="line">    if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) &#123;</span><br><span class="line">        // 解析 import 标签</span><br><span class="line">        importBeanDefinitionResource(ele);</span><br><span class="line">    &#125; else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) &#123;</span><br><span class="line">        // 解析 alias 标签</span><br><span class="line">        processAliasRegistration(ele);</span><br><span class="line">    &#125; else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) &#123;</span><br><span class="line">        // 解析 bean 标签</span><br><span class="line">        processBeanDefinition(ele, delegate);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从 <code>isDefaultNamespace()</code> 方法可以看出，在命名空间 <code>http://www.springframework.org/schema/beans</code> 下面定义的标签就是我们所说的默认标签，比如顶级标签 <code>beans</code>, 以及下面的 <code>bean</code>,<code>import</code>,<code>alias</code>等等其他标签。</p>
+<p>而不在默认命名空间下的标签就是自定义标签了，比如我们最常见的带 <code>context</code> 前缀的标签：<code>&lt;context:annotation-config/&gt;</code>,<code>&lt;context:component-scan base-package=&quot;com.xx.xx&quot;/&gt;</code>等。</p>
+<h5 id="2-bean-标签解析方法-processBeanDefinition"><a href="#2-bean-标签解析方法-processBeanDefinition" class="headerlink" title="2.bean 标签解析方法 processBeanDefinition"></a>2.bean 标签解析方法 processBeanDefinition</h5><p>委托给了<code>BeanDefinitionParserDelegate#parseBeanDefinitionElement</code>进行解析，解析完成后再进行注册。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) &#123;</span><br><span class="line">    // bean标签比较复杂，委托给了BeanDefinitionParserDelegate进行解析，返回封装了含 BeanDefinition，beanName，aliases 的BeanDefinitionHolder</span><br><span class="line">    BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);</span><br><span class="line">    if (bdHolder != null) &#123;</span><br><span class="line">        // 解析自定义属性或标签</span><br><span class="line">        bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);</span><br><span class="line">        try &#123;</span><br><span class="line">            // Register the final decorated instance.</span><br><span class="line">            // 注册到 BeanDefinitionRegistry，也就是DefaultListableBeanFactory中的 beanDefinitionMap 中</span><br><span class="line">            BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());</span><br><span class="line">        &#125;catch (BeanDefinitionStoreException ex) &#123;&#125;</span><br><span class="line">        // Send registration event. 发送bean注册事件</span><br><span class="line">        getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下看看代理类 <code>BeanDefinitionParserDelegate</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) &#123;</span><br><span class="line">    // beans 标签下的 bean, containingBean 为空</span><br><span class="line">    return parseBeanDefinitionElement(ele, null);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, BeanDefinition containingBean) &#123;</span><br><span class="line">    // 获取属性 id 值，用作 beanName</span><br><span class="line">    String id = ele.getAttribute(&quot;id&quot;);</span><br><span class="line">    // 获取属性 name 值，用作别名, 多个别名可用‘，’或‘；’分割开来</span><br><span class="line">    String nameAttr = ele.getAttribute(&quot;name&quot;);</span><br><span class="line">    // 分割多个别名</span><br><span class="line">    List&lt;String&gt; aliases = new ArrayList&lt;String&gt;();</span><br><span class="line">    if (StringUtils.hasLength(nameAttr)) &#123;</span><br><span class="line">        String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, BEAN_NAME_DELIMITERS);</span><br><span class="line">        aliases.addAll(Arrays.asList(nameArr));</span><br><span class="line">    &#125;</span><br><span class="line">    // 属性id值作为 bean 的名称</span><br><span class="line">    String beanName = id;</span><br><span class="line">    if (!StringUtils.hasText(beanName) &amp;&amp; !aliases.isEmpty()) &#123;</span><br><span class="line">        // 如果未定义id, 则将 第一个别名作为 beanName</span><br><span class="line">        beanName = aliases.remove(0);</span><br><span class="line">    &#125;</span><br><span class="line">    // beans 标签下的bean, 需要检查beanName和aliases的在当前xml配置文件中的唯一性</span><br><span class="line">    // bean 标签中嵌套的 bean 不需要检查</span><br><span class="line">    if (containingBean == null) &#123;</span><br><span class="line">        checkNameUniqueness(beanName, aliases, ele);</span><br><span class="line">    &#125;</span><br><span class="line">    // 解析标签的具体操作</span><br><span class="line">    AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);</span><br><span class="line">    if (beanDefinition != null) &#123;</span><br><span class="line">        // 下面主要是没有定义 beanName 时，名字自动生成的逻辑</span><br><span class="line">        if (!StringUtils.hasText(beanName)) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                if (containingBean != null) &#123;</span><br><span class="line">                    beanName = BeanDefinitionReaderUtils.generateBeanName(</span><br><span class="line">                            beanDefinition, this.readerContext.getRegistry(), true);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    beanName = this.readerContext.generateBeanName(beanDefinition);</span><br><span class="line"></span><br><span class="line">                    String beanClassName = beanDefinition.getBeanClassName();</span><br><span class="line">                    if (beanClassName != null &amp;&amp;</span><br><span class="line">                            beanName.startsWith(beanClassName) &amp;&amp; beanName.length() &gt; beanClassName.length() &amp;&amp;</span><br><span class="line">                            !this.readerContext.getRegistry().isBeanNameInUse(beanClassName)) &#123;</span><br><span class="line">                        aliases.add(beanClassName);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            //..........此处省略部分源码</span><br><span class="line">        &#125;</span><br><span class="line">        String[] aliasesArray = StringUtils.toStringArray(aliases);</span><br><span class="line">        // 返回 holder</span><br><span class="line">        return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);</span><br><span class="line">    &#125;</span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这部分主要是处理名字和别名的逻辑，下面看下解析的具体操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public AbstractBeanDefinition parseBeanDefinitionElement(</span><br><span class="line">        Element ele, String beanName, BeanDefinition containingBean) &#123;</span><br><span class="line">    this.parseState.push(new BeanEntry(beanName));</span><br><span class="line"></span><br><span class="line">    String className = null;</span><br><span class="line">    // 解析 class 属性</span><br><span class="line">    if (ele.hasAttribute(CLASS_ATTRIBUTE)) &#123;</span><br><span class="line">        className = ele.getAttribute(CLASS_ATTRIBUTE).trim();</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        String parent = null;</span><br><span class="line">        // 解析 parent 属性</span><br><span class="line">        if (ele.hasAttribute(PARENT_ATTRIBUTE)) &#123;</span><br><span class="line">            parent = ele.getAttribute(PARENT_ATTRIBUTE);</span><br><span class="line">        &#125;</span><br><span class="line">        // 创建GenericBeanDefinition实例</span><br><span class="line">        AbstractBeanDefinition bd = createBeanDefinition(className, parent);</span><br><span class="line">        // 解析其他属性 </span><br><span class="line">        parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);</span><br><span class="line">        bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));</span><br><span class="line">        // 解析meta标签</span><br><span class="line">        parseMetaElements(ele, bd);</span><br><span class="line">        // 解析lookup-method标签</span><br><span class="line">        parseLookupOverrideSubElements(ele, bd.getMethodOverrides());</span><br><span class="line">        // 解析replaced-method标签</span><br><span class="line">        parseReplacedMethodSubElements(ele, bd.getMethodOverrides());</span><br><span class="line">        // 解析constructor-arg标签</span><br><span class="line">        parseConstructorArgElements(ele, bd);</span><br><span class="line">        // 解析property标签</span><br><span class="line">        parsePropertyElements(ele, bd);</span><br><span class="line">        // 解析qualifier标签</span><br><span class="line">        parseQualifierElements(ele, bd);</span><br><span class="line"></span><br><span class="line">        bd.setResource(this.readerContext.getResource());</span><br><span class="line">        bd.setSource(extractSource(ele));</span><br><span class="line">        return bd;</span><br><span class="line">    &#125;</span><br><span class="line">    //..........此处省略部分源码</span><br><span class="line">    finally &#123;</span><br><span class="line">        this.parseState.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面就是解析的具体过程了，更具体的解析细节比较繁琐，不过逻辑简单，这里就不一一贴出来了，小伙伴们可以自己跟进去看看。</p>
+<h5 id="3-import-标签解析方法-importBeanDefinitionResource"><a href="#3-import-标签解析方法-importBeanDefinitionResource" class="headerlink" title="3.import 标签解析方法 importBeanDefinitionResource"></a>3.import 标签解析方法 importBeanDefinitionResource</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">protected void importBeanDefinitionResource(Element ele) &#123;</span><br><span class="line">    String location = ele.getAttribute(RESOURCE_ATTRIBUTE);</span><br><span class="line">    if (!StringUtils.hasText(location)) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    // Resolve system properties: e.g. &quot;$&#123;user.dir&#125;&quot;</span><br><span class="line">    // 解析占位符</span><br><span class="line">    location = SystemPropertyUtils.resolvePlaceholders(location);</span><br><span class="line">    Set&lt;Resource&gt; actualResources = new LinkedHashSet&lt;Resource&gt;(4);</span><br><span class="line">    // 判断是绝对还是相对路径</span><br><span class="line">    boolean absoluteLocation = false;</span><br><span class="line">    try &#123;</span><br><span class="line">        absoluteLocation = ResourcePatternUtils.isUrl(location) || ResourceUtils.toURI(location).isAbsolute();</span><br><span class="line">    &#125; catch (URISyntaxException ex) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // Absolute or relative?</span><br><span class="line">    if (absoluteLocation) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            // 确定是绝对路径后，直接交给 XmlBeanDefinitionReader 进行定位，加载，解析</span><br><span class="line">            int importCount = getReaderContext().getReader().loadBeanDefinitions(location, actualResources);</span><br><span class="line">        &#125; catch (BeanDefinitionStoreException ex) &#123;&#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            int importCount;</span><br><span class="line">            // 创建与当前资源同一父路径的相对资源</span><br><span class="line">            Resource relativeResource = getReaderContext().getResource().createRelative(location);</span><br><span class="line">            if (relativeResource.exists()) &#123;</span><br><span class="line">                // 资源存在，直接加载</span><br><span class="line">                importCount = getReaderContext().getReader().loadBeanDefinitions(relativeResource);</span><br><span class="line">                actualResources.add(relativeResource);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // 资源不存在，表明路径是含有通配符的路径</span><br><span class="line">                String baseLocation = getReaderContext().getResource().getURL().toString();</span><br><span class="line">                importCount = getReaderContext().getReader().loadBeanDefinitions(</span><br><span class="line">                        StringUtils.applyRelativePath(baseLocation, location), actualResources);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        //..........此处省略部分源码</span><br><span class="line">    &#125;</span><br><span class="line">    Resource[] actResArray = actualResources.toArray(new Resource[actualResources.size()]);</span><br><span class="line">    // 发送import事件</span><br><span class="line">    getReaderContext().fireImportProcessed(location, actResArray, extractSource(ele));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>import</code>标签解析比较简单，上面提到的资源 定位，加载方法: <code>loadBeanDefinitions</code>, 在<a href="https://me.oopcoder.cn/2019/10/18/spring-resource-load/">Spring容器加载过程源码解析之Resource定位加载</a>一文中有详细分析，想了解的小伙伴可以进去看看。</p>
+<h5 id="4-alias-标签解析方法-processAliasRegistration"><a href="#4-alias-标签解析方法-processAliasRegistration" class="headerlink" title="4.alias 标签解析方法 processAliasRegistration"></a>4.alias 标签解析方法 processAliasRegistration</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">protected void processAliasRegistration(Element ele) &#123;</span><br><span class="line">    String name = ele.getAttribute(NAME_ATTRIBUTE);</span><br><span class="line">    String alias = ele.getAttribute(ALIAS_ATTRIBUTE);</span><br><span class="line">    boolean valid = true;</span><br><span class="line">    if (!StringUtils.hasText(name)) &#123;</span><br><span class="line">        valid = false;</span><br><span class="line">    &#125;</span><br><span class="line">    if (!StringUtils.hasText(alias)) &#123;</span><br><span class="line">        valid = false;</span><br><span class="line">    &#125;</span><br><span class="line">    if (valid) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            // 注册别名</span><br><span class="line">            getReaderContext().getRegistry().registerAlias(name, alias);</span><br><span class="line">        &#125; catch (Exception ex) &#123;&#125;</span><br><span class="line">        // 发送alias注册事件</span><br><span class="line">        getReaderContext().fireAliasRegistered(name, alias, extractSource(ele));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>alias</code>标签跟<code>bean</code>标签下的<code>alias</code>属性都一样是<code>bean</code>的别名，那有什么作用呢？最简单的例子，比如，配置文件存在第三方<code>jar</code>包中，我们无法修改，但是又想通过特定的别名进行访问，这时候alias标签就派上用场了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// jar包中配置</span><br><span class="line">&lt;bean id=&quot;hello&quot;  name=&quot;hello-alias-1, hello-alias-2&quot;  class=“com.xx.xx&quot;/&gt;</span><br><span class="line">// 自己的配置</span><br><span class="line">&lt;alias name=&quot;hello&quot; alias=&quot;hello-alias-3&quot;/&gt;</span><br><span class="line">&lt;alias name=&quot;hello&quot; alias=&quot;hello-alias-4&quot;/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>按照上面这么配置，<code>hello</code> 就有4个别名了。</p>
+<p>好了，今天的默认标签解析就分析到这里了，下篇文章我们再分析自定义标签是如何解析的。</p>
+
+        </div>
+        
+          
+
+
+  <section class='meta' id="footer-meta">
+    <hr>
+    <div class='new-meta-box'>
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-10-27T18:54:03+08:00">
+  <a class='notlink'>
+    <i class="fas fa-clock" aria-hidden="true"></i>
+    <p>最后更新于 2019年10月27日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/spring/" rel="nofollow"><i class="fas fa-hashtag" aria-hidden="true"></i>&nbsp;<p>spring</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://me.oopcoder.cn/2019/10/27/spring-resource-parse-default-element/&title=Spring容器加载过程源码解析之默认标签解析 | OOPcoder&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://me.oopcoder.cn/2019/10/27/spring-resource-parse-default-element/&title=Spring容器加载过程源码解析之默认标签解析 | OOPcoder&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://me.oopcoder.cn/2019/10/27/spring-resource-parse-default-element/&title=Spring容器加载过程源码解析之默认标签解析 | OOPcoder&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/10/21/spring-resource-parse/" rel="prev" title="Spring容器加载过程源码解析之Resource解析流程">
+                                    
+                                        Spring容器加载过程源码解析之Resource解析流程
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/spring/"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i>spring</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Spring容器加载过程源码解析之默认标签解析',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+          
+          
+            <section class='widget author'>
+  <div class='content pure'>
+    
+      <div class='avatar'>
+        <img class='avatar' src='https://me.oopcoder.cn/assets/images/oopcoder.jpg'/>
+      </div>
+    
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="mailto:oopcoder@163.com"
+              class="social fas fa-envelope flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/lanboys1225"
+              class="social fab fa-github flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://music.163.com/#/user/home?id=1290850143"
+              class="social fas fa-headphones-alt flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+          
+        
+      
+        
+          
+          
+            
+  <section class='widget toc-wrapper'>
+    
+<header class='pure'>
+  <div><i class="fas fa-list fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;本文目录</div>
+  
+    <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div>
+  
+</header>
+
+    <div class='content pure'>
+      <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-什么是默认标签和自定义标签"><span class="toc-text">1.什么是默认标签和自定义标签</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-bean-标签解析方法-processBeanDefinition"><span class="toc-text">2.bean 标签解析方法 processBeanDefinition</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-import-标签解析方法-importBeanDefinitionResource"><span class="toc-text">3.import 标签解析方法 importBeanDefinitionResource</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-alias-标签解析方法-processAliasRegistration"><span class="toc-text">4.alias 标签解析方法 processAliasRegistration</span></a></li></ol>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            <section class='widget grid'>
+  
+<header class='pure'>
+  <div><i class="fas fa-map-signs fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;站内导航</div>
+  
+</header>
+
+  <div class='content pure'>
+    <ul class="grid navgation">
+      
+        <li><a class="flat-box" title="/" href="/"
+          
+          
+          id="home">
+          
+            <i class="fas fa-clock fa-fw" aria-hidden="true"></i>
+          
+          近期文章
+        </a></li>
+      
+        <li><a class="flat-box" title="/blog/archives/" href="/blog/archives/"
+          
+            rel="nofollow"
+          
+          
+          id="blogarchives">
+          
+            <i class="fas fa-archive fa-fw" aria-hidden="true"></i>
+          
+          文章归档
+        </a></li>
+      
+        <li><a class="flat-box" title="https://github.com/lanboys1225" href="https://github.com/lanboys1225"
+          
+          
+          id="https:github.comlanboys1225">
+          
+            <i class="fas fa-code-branch fa-fw" aria-hidden="true"></i>
+          
+          开源项目
+        </a></li>
+      
+        <li><a class="flat-box" title="/friends/" href="/friends/"
+          
+            rel="nofollow"
+          
+          
+          id="friends">
+          
+            <i class="fas fa-link fa-fw" aria-hidden="true"></i>
+          
+          我的友链
+        </a></li>
+      
+        <li><a class="flat-box" title="https://xaoxuu.com/wiki/material-x/" href="https://xaoxuu.com/wiki/material-x/"
+          
+            rel="nofollow"
+          
+          
+          id="https:xaoxuu.comwikimaterial-x">
+          
+            <i class="fas fa-book fa-fw" aria-hidden="true"></i>
+          
+          主题文档
+        </a></li>
+      
+        <li><a class="flat-box" title="/about/" href="/about/"
+          
+            rel="nofollow"
+          
+          
+          id="about">
+          
+            <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i>
+          
+          关于小站
+        </a></li>
+      
+    </ul>
+  </div>
+</section>
+
+          
+        
+      
+        
+          
+          
+            
+  <section class='widget category'>
+    
+<header class='pure'>
+  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;文章分类</div>
+  
+    <a class="rightBtn"
+    
+      rel="nofollow"
+    
+    
+    href="/blog/categories/"
+    title="blog/categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content pure'>
+      <ul class="entry">
+        
+          <li><a class="flat-box" title="/blog/categories/hexo/" href="/blog/categories/hexo/"><div class='name'>hexo</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/blog/categories/html/" href="/blog/categories/html/"><div class='name'>html</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/blog/categories/linux/" href="/blog/categories/linux/"><div class='name'>linux</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/blog/categories/maven/" href="/blog/categories/maven/"><div class='name'>maven</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/blog/categories/spring/" href="/blog/categories/spring/"><div class='name'>spring</div><div class='badge'>(4)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            
+  <section class='widget tagcloud'>
+    
+<header class='pure'>
+  <div><i class="fas fa-fire fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;热门标签</div>
+  
+    <a class="rightBtn"
+    
+      rel="nofollow"
+    
+    
+    href="/blog/tags/"
+    title="blog/tags/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content pure'>
+      <a href="/blog/tags/banner/" style="font-size: 14px; color: #999">banner</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/html/" style="font-size: 14px; color: #999">html</a> <a href="/blog/tags/iframe/" style="font-size: 14px; color: #999">iframe</a> <a href="/blog/tags/linux/" style="font-size: 14px; color: #999">linux</a> <a href="/blog/tags/maven/" style="font-size: 14px; color: #999">maven</a> <a href="/blog/tags/pom/" style="font-size: 14px; color: #999">pom</a> <a href="/blog/tags/spring/" style="font-size: 24px; color: #555">spring</a> <a href="/blog/tags/swiper/" style="font-size: 14px; color: #999">swiper</a> <a href="/blog/tags/xshell/" style="font-size: 14px; color: #999">xshell</a>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            
+
+
+  <section class='widget music'>
+    
+<header class='pure'>
+  <div><i class="fas fa-compact-disc fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;最近在听</div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_blank"
+    
+    href="https://music.163.com/#/user/home?id=1290850143"
+    title="https://music.163.com/#/user/home?id=1290850143">
+    <i class="far fa-heart fa-fw"></i></a>
+  
+</header>
+
+    <div class='content pure'>
+      
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.7.0/dist/APlayer.min.css">
+  <div class="aplayer"
+    data-theme="#1BCDFC"
+    
+    
+    data-mode="circulation"
+    data-server="netease"
+    data-type="playlist"
+    data-id="1983459158"
+    data-volume="0.7">
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.7.0/dist/APlayer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meting@1.1.0/dist/Meting.min.js"></script>
+
+
+    </div>
+  </section>
+
+
+          
+        
+      
+    
+
+  
+</aside>
+
+<footer id="footer" class="clearfix">
+  
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="mailto:oopcoder@163.com"
+            class="social fas fa-envelope flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/lanboys1225"
+            class="social fab fa-github flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://music.163.com/#/user/home?id=1290850143"
+            class="social fas fa-headphones-alt flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/material-x/" target="_blank" class="codename">Material X</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    var GOOGLE_CUSTOM_SEARCH_API_KEY = "";
+    var GOOGLE_CUSTOM_SEARCH_ENGINE_ID = "";
+    var ALGOLIA_API_KEY = "";
+    var ALGOLIA_APP_ID = "";
+    var ALGOLIA_INDEX_NAME = "";
+    var AZURE_SERVICE_NAME = "";
+    var AZURE_INDEX_NAME = "";
+    var AZURE_QUERY_KEY = "";
+    var BAIDU_API_ID = "";
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/"||"/";
+    if(!ROOT.endsWith('/'))ROOT += '/';
+  </script>
+
+<script src="//instant.page/1.2.2" type="module" integrity="sha384-2xV8M5griQmzyiY3CDqh1dn4z3llDVqZDqzjzcY+jCBCk/a5fXJmuZ/40JJAPeoU"></script>
+
+
+  <script async src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        if ('.cover') {
+          $('.cover').backstretch(
+          ["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg"],
+          {
+            duration: "6000",
+            fade: "2500"
+          });
+        } else {
+          $.backstretch(
+          ["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg"],
+          {
+            duration: "6000",
+            fade: "2500"
+          });
+        }
+      });
+    </script>
+  
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      <script src="/js/volantis.js"></script>
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'false' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "QY4MmyD4tSj80IfJSRJ78Nus-MdYXbMMI",
+    appKey: "WEzGAiXD0HWsTfiQdQ1eUgjU",
+    placeholder: "嗨，陌生人，既然来了，就说点啥呗~",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.5/js/app.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.5/js/search.js"></script>
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>
