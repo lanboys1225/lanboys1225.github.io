@@ -1,11 +1,11 @@
 ---
-title: Spring容器加载过程之源码解析之Resource解析流程
+title: Spring容器加载过程源码解析之Resource解析流程
 date: 2019-10-21 22:55:42
 category: spring
 tags: [spring]
 ---
 
->在上文 [Spring容器加载过程之源码解析之Resource定位加载](https://me.oopcoder.cn/2019/10/18/spring-resource-load/) 中，我们已经将资源路径解析为Resource了，今天我们来分析下整个解析流程。
+>在上文 [Spring容器加载过程源码解析之Resource定位加载](https://me.oopcoder.cn/2019/10/18/spring-resource-load/) 中，我们已经将资源路径解析为Resource了，今天我们来分析下整个解析流程。
 
 > 提醒：本文是基于Spring 3.0.0.RELEASE 版本进行讲解的，其他版本可能稍有差异，在贴源码的时候，部分不影响流程的代码也在本文省略了
 
