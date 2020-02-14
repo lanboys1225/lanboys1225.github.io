@@ -316,9 +316,174 @@
         
           
         
+          
+        
       
     
     
+      
+        
+          <div class='post-wrapper'>
+            <article class="post reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2020/02/13/build-openjdk8-on-ubuntu/">
+      在ubuntu18.04下编译OpenJDK8
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    <a href="http://me.oopcoder.cn" rel="nofollow">
+      
+        <i class="fas fa-user" aria-hidden="true"></i>
+      
+      <p>lanboys1225</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+    <p>2020-02-13</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/jvm/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>jvm</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p>最近一直在折腾 jvm，想自己编译一番，可是在 Windows 上用 CLion 怎么也搞不定，CMakeLists.txt 不对导致各种报错，后面换到 centos 上终于编译成功了，但是又想调试，就用 CLion 的远程调试功能，虽然可以调试，但是因为网速或者其他不知道的原因导致调试速度太慢了，毕竟项目这么大而且还是远程调试，只好作罢，另寻他法。</p>
+<p>想到周老师的《深入理解Java虚拟机》里有提到如何自己编译JDK, 于是参照周老师的方法终于编译成功了，还实现了调试功能，以后就能好好学习 jvm 源码了。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ul>
+<li>系统：ubuntu18.04.2 (我是在虚拟机中安装的，也可以直接在电脑中安装, 官网下载即可)</li>
+<li>调试软件：CLion2019.3.3 (官网下载即可)</li>
+<li>下载 openjdk 源码</li>
+</ul>
+<p>方法1. 可以通过Mercurial工具</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hg clone http://hg.openjdk.java.net/jdk8u/jdk8u</span><br><span class="line">cd jdk8u</span><br><span class="line">sh get_source.sh</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>ps: 一直报错，只好改用其他方式</p>
+</blockquote>
+<p>方法2. 在 <a href="https://hg.openjdk.java.net/jdk8u/jdk8u/" target="_blank" rel="noopener">https://hg.openjdk.java.net/jdk8u/jdk8u/</a> 中, 点击左边的 “browse”, 然后再点你需要的格式 bz2 / zip / gz 进行下载</p>
+<blockquote>
+<p>ps: 方法是对的，但事实证明，如何下载都下载不完全，多次尝试，要么报错下载不下来，要么不报错下载下来的压缩文件只有几百k, 文件损坏无法解压，只好改用其他方式</p>
+</blockquote>
+<p>方法3. 在github参库 <a href="https://github.com/unofficial-openjdk/openjdk" target="_blank" rel="noopener">https://github.com/unofficial-openjdk/openjdk</a> 中把jdk8u/jdk8u分支拉下来就可以了</p>
+<blockquote>
+<p>ps: 真是的，下载个源码也那么费劲, 还是github好</p>
+</blockquote>
+<h3 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h3><h6 id="1-安装一个jdk作为-bootstrap-jdk"><a href="#1-安装一个jdk作为-bootstrap-jdk" class="headerlink" title="1. 安装一个jdk作为 bootstrap jdk"></a>1. 安装一个jdk作为 bootstrap jdk</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openjdk-8-jdk</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-安装编译调试工具"><a href="#2-安装编译调试工具" class="headerlink" title="2. 安装编译调试工具"></a>2. 安装编译调试工具</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gcc</span><br><span class="line">sudo apt-get install g++</span><br><span class="line">sudo apt-get install make</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-安装其他依赖包"><a href="#3-安装其他依赖包" class="headerlink" title="3. 安装其他依赖包"></a>3. 安装其他依赖包</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev</span><br><span class="line">sudo apt-get install libcups2-dev</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev</span><br><span class="line">sudo apt-get install libasound2-dev</span><br><span class="line">sudo apt-get install libffi-dev</span><br><span class="line">sudo apt-get install autoconf</span><br><span class="line">sudo apt-get install ccache</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><ol>
+<li><p>设定语言选项，可先执行<code>echo $LANG</code>，看下输出，如果不是<code>C</code>，则执行<code>export LANG=C</code></p>
+</li>
+<li><p>在源码根目录下执行<code>./configure</code>命令，进行依赖项检查、参数配置和构建输出目录结构等工作，如果一切顺利的话，将会看到如下配置成功的提示</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">lanbing@ubuntu1804:~/openjdk/openjdk-jdk8u$ ./configure</span><br><span class="line"></span><br><span class="line">Running generated-configure.sh</span><br><span class="line">configure: Configuration created at Wed Feb 12 22:27:32 EST 2020.</span><br><span class="line">configure: configure script generated at timestamp 1468207795.</span><br><span class="line">checking for basename... /usr/bin/basename</span><br><span class="line">checking for bash... /bin/bash</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">====================================================</span><br><span class="line">A new configuration has been successfully created in</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release</span><br><span class="line">using default settings.</span><br><span class="line"></span><br><span class="line">Configuration summary:</span><br><span class="line">* Debug level:    release</span><br><span class="line">* JDK variant:    normal</span><br><span class="line">* JVM variants:   server</span><br><span class="line">* OpenJDK target: OS: linux, CPU architecture: x86, address length: 64</span><br><span class="line"></span><br><span class="line">Tools summary:</span><br><span class="line">* Boot JDK:       openjdk version &quot;1.8.0_242&quot; OpenJDK Runtime Environment (build 1.8.0_242-8u242-b08-0ubuntu3~18.04-b08) OpenJDK 64-Bit Server VM (build 25.242-b08, mixed mode)  (at /usr/lib/jvm/java-8-openjdk-amd64)</span><br><span class="line">* C Compiler:     x86_64-linux-gnu-gcc-7 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (at /usr/bin/x86_64-linux-gnu-gcc-7)</span><br><span class="line">* C++ Compiler:   x86_64-linux-gnu-g++-7 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (at /usr/bin/x86_64-linux-gnu-g++-7)</span><br><span class="line"></span><br><span class="line">Build performance summary:</span><br><span class="line">* Cores to use:   1</span><br><span class="line">* Memory limit:   2963 MB</span><br><span class="line">* ccache status:  installed, but disabled (version older than 3.1.4)</span><br><span class="line"></span><br><span class="line">WARNING: The result of this configuration has overridden an older</span><br><span class="line">configuration. You *should* run &apos;make clean&apos; to make sure you get a</span><br><span class="line">proper build. Failure to do so might result in strange build problems.</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>执行<code>make</code>命令进行编译，如果一切顺利的话(事实上不顺利，看后面解决问题的方法), 将会出现下面提示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">----- Build times -------</span><br><span class="line">Start 2020-02-12 22:50:51</span><br><span class="line">End   2020-02-12 23:24:47</span><br><span class="line">00:00:56 corba</span><br><span class="line">00:01:07 demos</span><br><span class="line">00:05:40 docs</span><br><span class="line">00:15:13 hotspot</span><br><span class="line">00:01:04 images</span><br><span class="line">00:00:30 jaxp</span><br><span class="line">00:00:46 jaxws</span><br><span class="line">00:08:18 jdk</span><br><span class="line">00:00:00 langtools</span><br><span class="line">00:00:21 nashorn</span><br><span class="line">00:33:56 TOTAL</span><br><span class="line">-------------------------</span><br><span class="line">Finished building OpenJDK for target &apos;all&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在编译好的jdk目录<code>~/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/jdk/bin</code>下执行<code>./java -version</code>命令进行验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lanbing@ubuntu1804:~/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/jdk/bin$ ./java -version</span><br><span class="line"></span><br><span class="line">openjdk version &quot;1.8.0-internal&quot;</span><br><span class="line">OpenJDK Runtime Environment (build 1.8.0-internal-lanbing_2020_02_12_22_27-b00)</span><br><span class="line">OpenJDK 64-Bit Server VM (build 25.71-b00, mixed mode)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h3><h6 id="1-编译内核版本问题"><a href="#1-编译内核版本问题" class="headerlink" title="1. 编译内核版本问题"></a>1. 编译内核版本问题</h6><p>打开 /hotspot/make/linux/Makefile 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># /hotspot/make/linux/Makefile 第236行</span><br><span class="line">SUPPORTED_OS_VERSION = 2.4% 2.5% 2.6% 3% 4%</span><br><span class="line">后面加上 5% 变成</span><br><span class="line">SUPPORTED_OS_VERSION = 2.4% 2.5% 2.6% 3% 4% 5%</span><br></pre></td></tr></table></figure>
+
+<p>从下面报错信息看到，系统内核版本为：<code>Linux ubuntu1804 5.3.0-28-generic</code> ，并不在上面支持列表中，所以在后面加上 <code>5%</code> 就可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">lanbing@ubuntu1804:~/openjdk/openjdk-jdk8u$ make </span><br><span class="line"></span><br><span class="line">Building OpenJDK for target &apos;default&apos; in configuration &apos;linux-x86_64-normal-server-release&apos;</span><br><span class="line"></span><br><span class="line">## Starting langtools</span><br><span class="line">Compiling 2 files for BUILD_TOOLS</span><br><span class="line">Compiling 32 properties into resource bundles</span><br><span class="line">Compiling 782 files for BUILD_BOOTSTRAP_LANGTOOLS</span><br><span class="line">Note: Some input files use or override a deprecated API.</span><br><span class="line">Note: Recompile with -Xlint:deprecation for details.</span><br><span class="line">Creating langtools/dist/bootstrap/lib/javac.jar</span><br><span class="line">Compiling 785 files for BUILD_FULL_JAVAC</span><br><span class="line">Note: Some input files use or override a deprecated API.</span><br><span class="line">Note: Recompile with -Xlint:deprecation for details.</span><br><span class="line">Creating langtools/dist/lib/classes.jar</span><br><span class="line">Updating langtools/dist/lib/src.zip</span><br><span class="line">## Finished langtools (build time 00:01:04)</span><br><span class="line"></span><br><span class="line">## Starting hotspot</span><br><span class="line"></span><br><span class="line">*** This OS is not supported: Linux ubuntu1804 5.3.0-28-generic #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/hotspot/make/linux/Makefile:242: recipe for target &apos;check_os_version&apos; failed</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/hotspot/make/linux/Makefile:263: recipe for target &apos;linux_amd64_compiler2/debug&apos; failed</span><br><span class="line">Makefile:230: recipe for target &apos;generic_build2&apos; failed</span><br><span class="line">Makefile:177: recipe for target &apos;product&apos; failed</span><br><span class="line">HotspotWrapper.gmk:44: recipe for target &apos;/home/lanbing/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/hotspot/_hotspot.timestamp&apos; failed</span><br><span class="line">make[5]: *** [check_os_version] Error 1</span><br><span class="line">make[4]: *** [linux_amd64_compiler2/debug] Error 2</span><br><span class="line">make[3]: *** [generic_build2] Error 2</span><br><span class="line">make[2]: *** [product] Error 2</span><br><span class="line">make[1]: *** [/home/lanbing/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/hotspot/_hotspot.timestamp] Error 2</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u//make/Main.gmk:108: recipe for target &apos;hotspot-only&apos; failed</span><br><span class="line">make: *** [hotspot-only] Error 2</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-Werror-deprecated-declarations问题，什么原因导致的暂不清楚"><a href="#2-Werror-deprecated-declarations问题，什么原因导致的暂不清楚" class="headerlink" title="2. -Werror=deprecated-declarations问题，什么原因导致的暂不清楚"></a>2. -Werror=deprecated-declarations问题，什么原因导致的暂不清楚</h6><p>打开 /hotspot/make/linux/makefiles/gcc.make 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># /hotspot/make/linux/makefiles/gcc.make 第200行</span><br><span class="line">WARNINGS_ARE_ERRORS = -Werror</span><br><span class="line">改成</span><br><span class="line">WARNINGS_ARE_ERRORS = -Wno-all</span><br></pre></td></tr></table></figure>
+
+<p>按上面方式修改好文件，许多警告就会被忽略了，直到编译成功。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/os/linux/vm/os_linux.inline.hpp:127:42: error: &apos;int readdir_r(DIR*, dirent*, dirent**)&apos; is deprecated [-Werror=deprecated-declarations]</span><br><span class="line">   if((status = ::readdir_r(dirp, dbuf, &amp;p)) != 0) &#123;</span><br><span class="line">                                          ^</span><br><span class="line">In file included from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/os/linux/vm/jvm_linux.h:44:0,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/prims/jvm.h:30,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/utilities/debug.hpp:29,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/runtime/globals.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/memory/allocation.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/memory/iterator.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/memory/genOopClosures.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/oops/klass.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/runtime/handles.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/memory/universe.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/code/oopRecorder.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/asm/codeBuffer.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/asm/assembler.hpp:28,</span><br><span class="line">                 from /home/lanbing/openjdk/openjdk-jdk8u/hotspot/src/share/vm/precompiled/precompiled.hpp:29:</span><br><span class="line">/usr/include/dirent.h:183:12: note: declared here</span><br><span class="line"> extern int readdir_r (DIR *__restrict __dirp,</span><br><span class="line">            ^~~~~~~~~</span><br><span class="line">cc1plus: all warnings being treated as errors</span><br><span class="line">make[6]: *** [precompiled.hpp.gch] Error 1</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/hotspot/make/linux/makefiles/vm.make:309: recipe for target &apos;precompiled.hpp.gch&apos; failed</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/hotspot/make/linux/makefiles/top.make:119: recipe for target &apos;the_vm&apos; failed</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u/hotspot/make/linux/Makefile:298: recipe for target &apos;product&apos; failed</span><br><span class="line">Makefile:230: recipe for target &apos;generic_build2&apos; failed</span><br><span class="line">Makefile:177: recipe for target &apos;product&apos; failed</span><br><span class="line">HotspotWrapper.gmk:44: recipe for target &apos;/home/lanbing/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/hotspot/_hotspot.timestamp&apos; failed</span><br><span class="line">make[5]: *** [the_vm] Error 2</span><br><span class="line">make[4]: *** [product] Error 2</span><br><span class="line">make[3]: *** [generic_build2] Error 2</span><br><span class="line">make[2]: *** [product] Error 2</span><br><span class="line">make[1]: *** [/home/lanbing/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/hotspot/_hotspot.timestamp] Error 2</span><br><span class="line">/home/lanbing/openjdk/openjdk-jdk8u//make/Main.gmk:108: recipe for target &apos;hotspot-only&apos; failed</span><br><span class="line">make: *** [hotspot-only] Error 2</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>1.我们用 CLion 进行调试，新建项目，选择 “New CMake Project from Sources”，然后再选源码根目录，CLion 帮我们选好了要导入的源码，直接点 <code>ok</code>(如图), 此时会自动创建 CMakeLists.txt, 不过不能使用，我们暂时也不需要使用到它</p>
+<p><img src="https://pic.downk.cc/item/5e4555dd48b86553eec4dd91.png" alt></p>
+<p>2.在 <code>Run/Debug Configurations</code> 中编辑或者新增一个 CMake Application , Executable 中选择我们前面编译出来的 <code>java</code> 命令, arguments 加上 <code>-version</code>, 把下方 Before launch 中的 Build 任务去掉，如图</p>
+<p><img src="https://pic.downk.cc/item/5e45566a48b86553eec4f7b2.png" alt></p>
+<p>3.在 <code>jdk/src/share/bin/java.c</code> 第 354 行的 <code>JavaMain()</code> 里设置断点，运行就可以进行调试了</p>
+<p><img src="https://pic.downk.cc/item/5e4556fa48b86553eec51033.png" alt></p>
+
+      
+    </div>
+    
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/jvm/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>jvm</a>
+        
+          <a href="/blog/tags/openjdk/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>openjdk</a>
+        
+          <a href="/blog/tags/ubuntu/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>ubuntu</a>
+        
+      </div>
+    
+  </section>
+</article>
+
+          </div>
+        
       
         
           <div class='post-wrapper'>
@@ -1512,154 +1677,6 @@
           </div>
         
       
-        
-          <div class='post-wrapper'>
-            <article class="post reveal ">
-  
-
-
-  <section class='meta'>
-    
-    
-    <div class="meta" id="header-meta">
-      
-        
-  <h2 class="title">
-    <a href="/2019/08/02/hexo-blog-create/">
-      Hexo 博客搭建（一）
-    </a>
-  </h2>
-
-
-      
-      <div class='new-meta-box'>
-        
-          
-        
-          
-            
-  <div class='new-meta-item author'>
-    <a href="http://me.oopcoder.cn" rel="nofollow">
-      
-        <i class="fas fa-user" aria-hidden="true"></i>
-      
-      <p>lanboys1225</p>
-    </a>
-  </div>
-
-
-          
-        
-          
-            <div class="new-meta-item date">
-  <a class='notlink'>
-    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2019-08-02</p>
-  </a>
-</div>
-
-          
-        
-          
-            
-  
-  <div class='new-meta-item category'>
-    <a href='/blog/categories/hexo/' rel="nofollow">
-      <i class="fas fa-folder-open" aria-hidden="true"></i>
-      <p>hexo</p>
-    </a>
-  </div>
-
-
-          
-        
-          
-            
-
-          
-        
-          
-            
-
-          
-        
-      </div>
-      
-        <hr>
-      
-    </div>
-  </section>
-
-
-  <section class="article typo">
-    <div class="article-entry" itemprop="articleBody">
-      <p>网上学习搭建hexo博客的教程一抓一大把，但是基本上都没说清楚这中间的原理到底是啥？那么让我带领大家一起去探个究竟，学习之前，我们先看看 Github Pages (以下简称 gp) 和 Hexo 到底是什么？</p>
-<h2 id="1-什么是Github-Pages"><a href="#1-什么是Github-Pages" class="headerlink" title="1. 什么是Github Pages?"></a>1. 什么是Github Pages?</h2><p><a href="https://help.github.com/articles/what-is-github-pages/" target="_blank" rel="noopener">官方文档</a>是这样描述的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GitHub Pages is a static site hosting service designed to host your personal, organization, or project pages directly from a GitHub repository.</span><br></pre></td></tr></table></figure>
-
-<p>好了，文档看完了，接下来可以愉快的创建一个属于自己的博客了，我先假设：你已经有了GitHub的账号，并且账号是 <code>AAA</code>，</p>
-<p>首先 我们创建一个 名称为 <code>AAA.github.io</code> (名称必须按这个格式)的git仓库，如下图： </p>
-<p><img src="https://pic.superbed.cn/item/5d3ba3b6451253d178bfc354.png" alt></p>
-<p>然后，在浏览器中输入 <code>http://AAA.github.io</code> </p>
-<p><img src="https://pic.superbed.cn/item/5d3ba45f451253d178bfc82f.png" alt></p>
-<p>看到如上界面，说明我们的最简单的 github博客已经搭建完成啦<del>~</del></p>
-<h2 id="2-什么是-Hexo"><a href="#2-什么是-Hexo" class="headerlink" title="2. 什么是 Hexo?"></a>2. 什么是 Hexo?</h2><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 <a href="http://daringfireball.net/projects/markdown/" target="_blank" rel="noopener">Markdown</a>（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<p>官方文档 <a href="https://hexo.io/zh-cn/docs/index.html" target="_blank" rel="noopener">点这查看</a></p>
-<p>看到这里，可能还是一脸懵逼，不过我们需要知道 gp 和 hexo 之间的联系，在我看来, 他们之间其实没有任何关系，唯一的联系是：</p>
-<blockquote>
-<p>github 会托管静态网页，而 hexo 会生成静态网页，我们只是将hexo生成的网页放到 github上，这样访问 <code>AAA.github.io</code> 就访问了hexo生成的网页</p>
-</blockquote>
-<p>这关系一下子就清楚了，接下来继续。。</p>
-<h2 id="3-环境-Node-js-Git-安装"><a href="#3-环境-Node-js-Git-安装" class="headerlink" title="3. 环境 Node.js / Git 安装"></a>3. 环境 <a href="http://nodejs.org/" target="_blank" rel="noopener">Node.js</a> / <a href="http://git-scm.com/" target="_blank" rel="noopener">Git</a> 安装</h2><p>来到这步，说明你已经了解了上述的概念</p>
-<p>主要流程：</p>
-<ol>
-<li>安装 git</li>
-<li>安装 node</li>
-<li>node安装好之后，安装 hexo</li>
-</ol>
-<p>安装细节的话，我们还是按照<a href="https://hexo.io/zh-cn/docs/index.html" target="_blank" rel="noopener">官方文档</a>进行</p>
-<h3 id="坑："><a href="#坑：" class="headerlink" title="坑："></a>坑：</h3><p>1.执行 npm install -g hexo-cli 长时间无响应，或者报如下错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br><span class="line">npm ERR! code EAI_AGAIN</span><br><span class="line">npm ERR! errno EAI_AGAIN</span><br><span class="line">npm ERR! request to https://registry.npmjs.org/hexo-cli failed, reason: getaddrinfo EAI_AGAIN registry.npmjs.org:443</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\lanbing\AppData\Roaming\npm-cache\_logs\2018-03-13T02_15_13_203Z-debug.log</span><br></pre></td></tr></table></figure>
-
-<p>解决办法：执行  <code>$ npm install -g npm</code> 更新 npm ,  然后再次执行 <code>$ npm install -g hexo-cli</code> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g npm</span><br><span class="line">C:\Users\lanbing\AppData\Roaming\npm\npm -&gt; C:\Users\lanbing\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js</span><br><span class="line">C:\Users\lanbing\AppData\Roaming\npm\npx -&gt; C:\Users\lanbing\AppData\Roaming\npm\node_modules\npm\bin\npx-cli.js</span><br><span class="line">npm@5.7.1</span><br><span class="line">added 533 packages in 113.185s</span><br><span class="line"></span><br><span class="line">C:\Users\lanbing\AppData\Roaming\npm\hexo -&gt; C:\Users\lanbing\AppData\Roaming\npm\node_modules\hexo-cli\bin\hexo</span><br><span class="line">npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.1.3 (node_modules\hexo-cli\node_modules\fsevents):</span><br><span class="line">npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.1.3: wanted &#123;&quot;os&quot;:&quot;darwin&quot;,&quot;arch&quot;:&quot;any&quot;&#125; (current: &#123;&quot;os&quot;:&quot;win32&quot;,&quot;arch&quot;:&quot;x64&quot;&#125;)</span><br><span class="line">hexo-cli@1.1.0</span><br><span class="line">added 103 packages from 338 contributors in 73.08s</span><br></pre></td></tr></table></figure>
-
-<h2 id="4-Hexo博客搭建"><a href="#4-Hexo博客搭建" class="headerlink" title="4.Hexo博客搭建"></a>4.Hexo博客搭建</h2><p>踩过一系列的坑之后，现在终于可以开始搭建 hexo blog了</p>
-<ol>
-<li><p>新建一个文件夹叫   <code>helloBlog</code> (可自己随便取名字，无所谓)</p>
-</li>
-<li><p>进入文件夹 <code>helloBlog</code> 中， 在 <code>git bash</code> 窗口里面执行下面命令初始化博客</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init </span><br><span class="line">$ npm install //这条命令不执行，貌似也可以，不过官方文档写明要执行，那就执行吧</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行完命令后，文件夹目录如下表示初始化成功</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> .</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>博客已经构建好了，现在需要的是一个本地服务器来进行部署，Hexo 3.0 把服务器独立成了个别模块，必须先安装 <a href="https://github.com/hexojs/hexo-server" target="_blank" rel="noopener">hexo-server</a> 才能使用， 用如下命令安装：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-server --save</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>现在启动服务器</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ hexo s  //或者 hexo server</span><br><span class="line">// 出现如下信息，表明已经成功启动了服务器</span><br><span class="line">$ hexo s</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>现在在浏览器中输入 <code>http://localhost:4000/</code>或者 <code>http://127.0.0.1:4000/</code>（有的电脑，输入localhost访问不了，就用 127.0.0.1 访问）就可以访问啦~~</p>
-</li>
-</ol>
-<p>到目前为止，我们知道了在怎么样利用 github 和 hexo 搭建博客, 但是要怎么实现上面说的，将 hexo 生成的静态博客网页，放到 github 中进行托管？就等下一篇文章再给大家讲解啦！！</p>
-
-      
-    </div>
-    
-      <div class="full-width auto-padding tags">
-        
-          <a href="/blog/tags/hexo/" rel="nofollow"><i class="fas fa-hashtag fa-fw"></i>hexo</a>
-        
-      </div>
-    
-  </section>
-</article>
-
-          </div>
-        
-      
     
   </section>
   
@@ -1864,6 +1881,8 @@
         
           <li><a class="flat-box" title="/blog/categories/html/" href="/blog/categories/html/"><div class='name'>html</div><div class='badge'>(1)</div></a></li>
         
+          <li><a class="flat-box" title="/blog/categories/jvm/" href="/blog/categories/jvm/"><div class='name'>jvm</div><div class='badge'>(1)</div></a></li>
+        
           <li><a class="flat-box" title="/blog/categories/linux/" href="/blog/categories/linux/"><div class='name'>linux</div><div class='badge'>(1)</div></a></li>
         
           <li><a class="flat-box" title="/blog/categories/maven/" href="/blog/categories/maven/"><div class='name'>maven</div><div class='badge'>(1)</div></a></li>
@@ -1899,7 +1918,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/blog/tags/banner/" style="font-size: 14px; color: #999">banner</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/html/" style="font-size: 14px; color: #999">html</a> <a href="/blog/tags/iframe/" style="font-size: 14px; color: #999">iframe</a> <a href="/blog/tags/linux/" style="font-size: 14px; color: #999">linux</a> <a href="/blog/tags/maven/" style="font-size: 14px; color: #999">maven</a> <a href="/blog/tags/pom/" style="font-size: 14px; color: #999">pom</a> <a href="/blog/tags/spring/" style="font-size: 24px; color: #555">spring</a> <a href="/blog/tags/swiper/" style="font-size: 14px; color: #999">swiper</a> <a href="/blog/tags/xshell/" style="font-size: 14px; color: #999">xshell</a>
+      <a href="/blog/tags/banner/" style="font-size: 14px; color: #999">banner</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/html/" style="font-size: 14px; color: #999">html</a> <a href="/blog/tags/iframe/" style="font-size: 14px; color: #999">iframe</a> <a href="/blog/tags/jvm/" style="font-size: 14px; color: #999">jvm</a> <a href="/blog/tags/linux/" style="font-size: 14px; color: #999">linux</a> <a href="/blog/tags/maven/" style="font-size: 14px; color: #999">maven</a> <a href="/blog/tags/openjdk/" style="font-size: 14px; color: #999">openjdk</a> <a href="/blog/tags/pom/" style="font-size: 14px; color: #999">pom</a> <a href="/blog/tags/spring/" style="font-size: 24px; color: #555">spring</a> <a href="/blog/tags/swiper/" style="font-size: 14px; color: #999">swiper</a> <a href="/blog/tags/ubuntu/" style="font-size: 14px; color: #999">ubuntu</a> <a href="/blog/tags/xshell/" style="font-size: 14px; color: #999">xshell</a>
     </div>
   </section>
 
