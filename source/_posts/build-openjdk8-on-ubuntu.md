@@ -39,30 +39,31 @@ sh get_source.sh
 ```
 sudo apt-get install openjdk-8-jdk
 ```
-###### 2. 安装编译调试工具
+###### 2. 安装编译调试工具(如在安装CLion时安装过了下面工具可直接跳到下一步)
 
 ```
 sudo apt-get install gcc
 sudo apt-get install g++
+sudo apt-get install gdb
 sudo apt-get install make
 ```
 ###### 3. 安装其他依赖包
 
 ```
+sudo apt-get install ccache
+
 sudo apt-get install libfreetype6-dev
 sudo apt-get install libcups2-dev
 sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev
 sudo apt-get install libasound2-dev
 sudo apt-get install libffi-dev
 sudo apt-get install autoconf
-sudo apt-get install ccache
 ```
 
 ### 编译
+> 编译一般没那么顺利，可提前看看下一小节的坑
 
-1. 设定语言选项，可先执行`echo $LANG`，看下输出，如果不是`C`，则执行`export LANG=C`
-
-2. 在源码根目录下执行`./configure`命令，进行依赖项检查、参数配置和构建输出目录结构等工作，如果一切顺利的话，将会看到如下配置成功的提示
+1 . 在源码根目录下执行`./configure`命令，进行依赖项检查、参数配置和构建输出目录结构等工作，如果一切顺利的话，将会看到如下配置成功的提示。如果不顺利可按后面提示安装工具或依赖即可。
 
 ```
 lanbing@ubuntu1804:~/openjdk/openjdk-jdk8u$ ./configure
@@ -101,31 +102,28 @@ configuration. You *should* run 'make clean' to make sure you get a
 proper build. Failure to do so might result in strange build problems.
 ```
 
-3. 执行`make`命令进行编译，如果一切顺利的话(事实上不顺利，看后面解决问题的方法), 将会出现下面提示
+2 . 执行`make`命令进行编译，编译成功， 将会出现下面提示
+
 ```
 ----- Build times -------
-Start 2020-02-12 22:50:51
-End   2020-02-12 23:24:47
-00:00:56 corba
-00:01:07 demos
-00:05:40 docs
-00:15:13 hotspot
-00:01:04 images
-00:00:30 jaxp
-00:00:46 jaxws
-00:08:18 jdk
+Start 2020-02-17 12:00:21
+End   2020-02-17 12:18:17
+00:00:37 corba
+00:11:06 hotspot
+00:00:21 jaxp
+00:00:30 jaxws
+00:05:22 jdk
 00:00:00 langtools
-00:00:21 nashorn
-00:33:56 TOTAL
+00:17:56 TOTAL
 -------------------------
-Finished building OpenJDK for target 'all'
+Finished building OpenJDK for target 'default'
 ```
-4. 在编译好的jdk目录`~/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/jdk/bin`下执行`./java -version`命令进行验证
+3 . 在编译好的jdk目录`~/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/jdk/bin`下执行`./java -version`命令进行验证
 ```
 lanbing@ubuntu1804:~/openjdk/openjdk-jdk8u/build/linux-x86_64-normal-server-release/jdk/bin$ ./java -version
 
 openjdk version "1.8.0-internal"
-OpenJDK Runtime Environment (build 1.8.0-internal-lanbing_2020_02_12_22_27-b00)
+OpenJDK Runtime Environment (build 1.8.0-internal-lanbing_2020_02_17_11_43-b00)
 OpenJDK 64-Bit Server VM (build 25.71-b00, mixed mode)
 ```
 

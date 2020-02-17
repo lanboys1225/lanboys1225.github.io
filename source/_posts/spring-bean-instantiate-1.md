@@ -73,7 +73,7 @@ private <T> T doGetBean(final String name, final Class<T> requiredType, final Ob
         if (!typeCheckOnly) {
             markBeanAsCreated(beanName);
         }
-        // 获取合并后的根 BeanDefinition，BeanDefintiton 根类一样具有继承关系
+        // 获取合并后的根 BeanDefinition，BeanDefintiton 跟类一样具有继承关系
         final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
         checkMergedBeanDefinition(mbd, beanName, args);
 
@@ -146,11 +146,11 @@ private <T> T doGetBean(final String name, final Class<T> requiredType, final Ob
 ```
 
  `doGetBean` 方法里面调用了几个比较重要的方法：
- - getSingleton(String beanName);
- - getObjectForBeanInstance(Object beanInstance, String name, String beanName, RootBeanDefinition mbd);
- - getMergedLocalBeanDefinition(String beanName);
- - getSingleton(String beanName, ObjectFactory singletonFactory);
- - createBean(String beanName, RootBeanDefinition mbd, Object[] args)。
+- getSingleton(String beanName);
+- getObjectForBeanInstance(Object beanInstance, String name, String beanName, RootBeanDefinition mbd);
+- getMergedLocalBeanDefinition(String beanName);
+- getSingleton(String beanName, ObjectFactory singletonFactory);
+- createBean(String beanName, RootBeanDefinition mbd, Object[] args)。
 
 ##### 3. getSingleton
 我们先看看`getSingleton(String beanName, ObjectFactory singletonFactory)`
@@ -264,7 +264,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 Bean实例化的大致流程基本上就是这样了，上面提到的一些重要方法这里还没具体看，我们下次再来分析一波。
 
 
- 
+
 
 
 
